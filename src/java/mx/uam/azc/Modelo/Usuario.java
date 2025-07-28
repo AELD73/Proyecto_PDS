@@ -23,6 +23,10 @@ public class Usuario {
         this.tipoUsr = tipoUsr;
     }
 
+    public Usuario() {
+        
+    }
+
     public int getIdUsr() {
         return idUsr;
     }

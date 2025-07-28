@@ -25,10 +25,9 @@ public class UsuarioDAO implements DAO<Usuario>{
 
     @Override
     public Optional<Usuario> get(String correo, String password) {
-        try {
-            String query = "SELECT * FROM Usuario WHERE correo = ? AND constraseña=?";
+        String query = "SELECT * FROM Usuario WHERE correo = ? AND contraseña = ?";
+        try (PreparedStatement smt = conexion.prepareStatement(query);){
             
-            PreparedStatement smt = conexion.prepareStatement(query);
             smt.setString(1, correo);
             smt.setString(2, password);
             ResultSet rs = smt.executeQuery();
@@ -44,7 +43,7 @@ public class UsuarioDAO implements DAO<Usuario>{
                 
             }
         } catch (SQLException ex) {
-            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
+             ex.printStackTrace();
         }
         return Optional.empty();
     }

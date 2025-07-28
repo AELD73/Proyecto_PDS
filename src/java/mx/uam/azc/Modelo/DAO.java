@@ -12,7 +12,7 @@ import java.util.Optional;
  * @author lopez
  */
 public interface DAO <T>{
-    Optional<T> get(long id);
+    Optional<T> get(String correo, String password);
     
     List<T> getAll();
     

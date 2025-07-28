@@ -13,13 +13,18 @@
         <link rel="stylesheet" href="css/style.css">
     </head>
     <body>
-        <section class="form-login">
-      <h5>Formulario Login</h5>
-      <input class="controls" type="text" name="usuario" value="" placeholder="Usuario">
-      <input class="controls" type="password" name="contrasena" value="" placeholder="Contraseña">
-      <input class="buttons" type="submit" name="" value="Ingresar">
-      <p><a href="#">¿Olvidastes tu Contraseña?</a></p>
+        
+            
+            <form class="form-login" action="ValidadcionUsuarios" method="post">
+                <h5>Formulario Login</h5>
+                <input class="controls" type="text" name="usuario"  >
+                <input class="controls" type="password" name="contrasena"  >
+                <input class="buttons" type="submit" name="" value="Ingresar">
+                <p><a href="index.jsp">¿Olvidastes tu Contraseña?</a></p>
+            </form>
 
-    </section>
+            
+
+        
     </body>
 </html>

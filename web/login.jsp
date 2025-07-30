@@ -20,7 +20,7 @@
                 <input class="controls" type="text" name="usuario"  >
                 <input class="controls" type="password" name="contrasena"  >
                 <input class="buttons" type="submit" name="" value="Ingresar">
-                <p><a href="index.jsp">¿Olvidastes tu Contraseña?</a></p>
+                <p><a href="index.jsp">¿Olvidaste tu Contraseña?</a></p>
             </form>
 
             

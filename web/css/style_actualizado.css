@@ -120,6 +120,70 @@ header.header {
   border-radius: 5px;
   margin-top: 10px;
 }
+#carrito h2 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: #333;
+    text-align: center;
+}
+
+#carrito table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+#carrito th, #carrito td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+#carrito th {
+    background-color: #f8f8f8;
+    color: #555;
+    font-weight: bold;
+}
+
+#carrito input[type="number"] {
+    width: 60px;
+    padding: 5px;
+    text-align: center;
+}
+
+#carrito input[type="submit"], #carrito .buttons {
+    background-color: #008cba;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    margin-top: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#carrito input[type="submit"]:hover, #carrito .buttons:hover {
+    background-color: #005f73;
+}
+
+#carrito p {
+    text-align: center;
+    color: #777;
+    font-style: italic;
+}
+
+.error-msg {
+    color: red;
+    background-color: #fdd;
+    padding: 10px;
+    border: 1px solid #faa;
+    border-radius: 5px;
+    margin: 10px 0;
+    text-align: center;
+}
 
 /* ========================================
    5. HERO (FORMULARIO DE PRENDA)

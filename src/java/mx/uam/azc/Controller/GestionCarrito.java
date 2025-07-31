@@ -27,8 +27,10 @@ public class GestionCarrito extends HttpServlet {
             int cantidad = Integer.parseInt(request.getParameter("cantidad"));
 
             try (Connection conn = ConexionBD.getConexion()) {
-                CarritoDAO dao = new CarritoDAO(conn);
-                Producto producto = dao.getProductoPorId(idProducto);
+                ProductoDAO dao = new ProductoDAO(conn);
+                Usuario usuario = (Usuario) session.getAttribute("usuario");
+                String tipo = (usuario != null) ? usuario.getTipoUsr() : "personal"; // default personal
+                Producto producto = dao.getProductoPorId(idProducto, tipo);
 
                 if (producto != null) {
                     carrito.agregarProducto(producto, cantidad);

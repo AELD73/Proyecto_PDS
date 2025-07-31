@@ -3,6 +3,7 @@
 Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
 Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
 -->
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <html>
     <head>
         <title>Style360</title>
@@ -24,19 +25,60 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
                                 <img src="img/cart.png" id="img-carrito">
                                 <div id="carrito">
 
-                                    <table id="lista-carrito" class="u-full-width">
-                                        <thead>
+                                    <%@ page import="java.util.List" %>
+                                    <%@ page import="mx.uam.azc.Modelo.Carrito" %>
+                                    <%@ page import="mx.uam.azc.Modelo.ItemCarrito" %>
+                                    <%@ page import="mx.uam.azc.Modelo.Producto" %>
+
+                                    <%
+                                        Carrito carrito = (Carrito) session.getAttribute("carrito");
+                                        if (carrito != null && !carrito.getItems().isEmpty()) {
+                                    %>
+
+                                        <h2>üõí Tu Carrito</h2>
+                                        <table border="1">
                                             <tr>
-                                                <th>Imagen</th>
-                                                <th>Nombre</th>
+                                                <th>Producto</th>
                                                 <th>Precio</th>
                                                 <th>Cantidad</th>
-                                                <th></th>
+                                                <th>Subtotal</th>
+                                                <th>Acciones</th>
                                             </tr>
-                                        </thead>
-                                        <tbody></tbody>
+
+                                            <% for (ItemCarrito item : carrito.getItems()) {
+                                                Producto p = item.getProducto(); %>
+                                            <tr>
+                                                <td><%= p.getNombre() %></td>
+                                                <td>$<%= p.getPrecio() %></td>
+                                                <td>
+                                                    <form action="ActualizarCarrito" method="post" style="display:inline;">
+                                                        <input type="hidden" name="idProducto" value="<%= p.getId() %>"/>
+                                                        <input type="number" name="cantidad" value="<%= item.getCantidad() %>" min="1" />
+                                                        <input type="submit" value="Actualizar"/>
+                                                    </form>
+                                                </td>
+                                                <td>$<%= item.getSubtotal() %></td>
+                                                <td>
+                                                    <form action="EliminarDelCarrito" method="post" style="display:inline;">
+                                                    <input type="hidden" name="idProducto" value="<%= p.getId() %>"/>
+                                                    <input type="submit" value="Eliminar"/>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        <% } %>
+                                        <tr>
+                                            <td colspan="3" style="text-align:right;"><strong>Total:</strong></td>
+                                            <td colspan="2">$<%= carrito.getTotal() %></td>
+                                        </tr>
                                     </table>
-                                    <a href="#" id="vaciar-carrito" class="button u-full-width">Vaciar Carrito</a>
+
+                                    <form action="ConfirmarPedido" method="post">
+                                        <input type="submit" class="buttons" value="Confirmar pedido"/>
+                                    </form>
+
+                                <%  } else { %>
+                                    <p>üõçÔ∏è Tu carrito est√° vac√≠o.</p>
+                                <% } %>
                                 </div>
                             </li>
                         </ul>
@@ -52,7 +94,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
                             <h2>Aprende algo nuevo</h2>
                             <p>Todos los cursos a $15</p>
                             <form action="#" id="busqueda" method="post" class="formulario">
-                                <input class="u-full-width" type="text" placeholder="øQue te gustarÌa Aprender?" id="buscador">
+                                <input class="u-full-width" type="text" placeholder="¬øQue te gustar√≠a Aprender?" id="buscador">
                                 <input type="submit" id="submit-buscador" class="submit-buscador">
                             </form>
                         </div>
@@ -64,8 +106,8 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
             <div class="container">
                 <div class="row">
                     <div class="four columns icono icono1">
-                        <p>20,000 Cursos en lÌnea <br>
-                            Explora  los temas m·s recientes</p>
+                        <p>20,000 Cursos en l√≠nea <br>
+                            Explora  los temas m√°s recientes</p>
                     </div>
                     <div class="four columns icono icono2">
                         <p>Instructores Expertos <br>
@@ -78,9 +120,9 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
                 </div>
             </div>
         </div>
-        <!-- AquÌ inician las cartas-->
+        <!-- Aqu√≠ inician las cartas-->
         <div id="lista-cursos" class="container">
-            <h1 id="encabezado" class="encabezado">Cursos En LÌnea</h1>
+            <h1 id="encabezado" class="encabezado">Cursos En L√≠nea</h1>
             <div class="row">
                 <div class="four columns">
                     <div class="card">
@@ -104,14 +146,14 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
                         <nav id="principal" class="menu">
                             <a class="enlace" href="#">Para tu Negocio</a>
                             <a class="enlace" href="#">Conviertete en Instructor</a>
-                            <a class="enlace" href="#">Aplicaciones MÛviles</a>
+                            <a class="enlace" href="#">Aplicaciones M√≥viles</a>
                             <a class="enlace" href="#">Soporte</a>
                             <a class="enlace" href="#">Temas</a>
                         </nav>
                     </div>
                     <div class="four columns">
                         <nav id="secundaria" class="menu">
-                            <a class="enlace" href="#">øQuienes Somos?</a>
+                            <a class="enlace" href="#">¬øQuienes Somos?</a>
                             <a class="enlace" href="#">Empleo</a>
                             <a class="enlace" href="#">Blog</a>
                         </nav>

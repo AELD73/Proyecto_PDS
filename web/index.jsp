@@ -94,9 +94,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
                     <div class="six columns">
                         <div class="contenido-hero">
                             <h1 id="encabezado" class="encabezado">
-
                                 Bienvenido ${sessionScope.usuario}, ¿En qué te podemos ayudar?
-
                             </h1>
 
                         </div>

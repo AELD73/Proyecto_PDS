@@ -6,11 +6,11 @@ package mx.uam.azc.Modelo;
 
 import java.sql.*;
 
-public class ProductoDAO {
+public class DAO_Producto {
 
     private final Connection conexion;
 
-    public ProductoDAO(Connection conexion) {
+    public DAO_Producto(Connection conexion) {
         this.conexion = conexion;
     }
 

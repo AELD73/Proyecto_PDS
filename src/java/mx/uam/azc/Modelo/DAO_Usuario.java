@@ -15,10 +15,10 @@ import java.util.logging.Logger;
  *
  * @author lopez
  */
-public class UsuarioDAO implements DAO<Usuario>{
+public class DAO_Usuario implements DAO<Usuario>{
     private final Connection conexion;
 
-    public UsuarioDAO(Connection conexion) {
+    public DAO_Usuario(Connection conexion) {
         this.conexion = conexion;
     }
     

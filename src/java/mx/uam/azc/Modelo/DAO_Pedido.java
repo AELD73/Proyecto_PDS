@@ -13,11 +13,11 @@ import java.sql.*;
 import java.time.LocalDate;
 import java.util.List;
 
-public class PedidoDAO {
+public class DAO_Pedido {
 
     private final Connection conexion;
 
-    public PedidoDAO(Connection conexion) {
+    public DAO_Pedido(Connection conexion) {
         this.conexion = conexion;
     }
 

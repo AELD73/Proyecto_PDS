@@ -10,10 +10,10 @@ package mx.uam.azc.Modelo;
  */
 import java.sql.*;
 
-public class CarritoDAO {
+public class DAO_Carrido {
     private Connection conexion;
 
-    public CarritoDAO(Connection conexion) {
+    public DAO_Carrido(Connection conexion) {
         this.conexion = conexion;
     }
 

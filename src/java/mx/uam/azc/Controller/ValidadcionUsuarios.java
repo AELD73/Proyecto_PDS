@@ -17,7 +17,7 @@ import java.sql.Connection;
 import java.util.Optional;
 import javax.servlet.http.HttpSession;
 import mx.uam.azc.Modelo.Usuario;
-import mx.uam.azc.Modelo.UsuarioDAO;
+import mx.uam.azc.Modelo.DAO_Usuario;
 
 /**
  *
@@ -59,7 +59,7 @@ public class ValidadcionUsuarios extends HttpServlet {
         String contrasena = request.getParameter("contrasena");
 
         try (Connection conn = ConexionBD.getConexion()) {
-            UsuarioDAO usuarioDAO = new UsuarioDAO(conn);
+            DAO_Usuario usuarioDAO = new DAO_Usuario(conn);
             Optional<Usuario> usuario = usuarioDAO.get(correo, contrasena);
 
             if (usuario.isPresent()) {

@@ -108,6 +108,14 @@ public abstract class Prenda {
         this.costo_personal = costo_personal;
     }
     
+    //Métodos adicionales para esta clase abstracta
     
+    public String getDescription(){
+        return "";
+    }
+    
+    public double getPrecio(){
+        return 0.0;
+    }
     
 }

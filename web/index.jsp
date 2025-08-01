@@ -4,13 +4,15 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to c
 Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
 -->
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql"%>
 <html>
     <head>
         <title>Style360</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="css/style_actualizado.css">
-        
+
     </head>
     <body>
         <header id="header" class="header">
@@ -35,40 +37,40 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
                                         if (carrito != null && !carrito.getItems().isEmpty()) {
                                     %>
 
-                                        <h2>🛒 Tu Carrito</h2>
-                                        <table border="1">
-                                            <tr>
-                                                <th>Producto</th>
-                                                <th>Precio</th>
-                                                <th>Cantidad</th>
-                                                <th>Subtotal</th>
-                                                <th>Acciones</th>
-                                            </tr>
+                                    <h2>🛒 Tu Carrito</h2>
+                                    <table border="1">
+                                        <tr>
+                                            <th>Producto</th>
+                                            <th>Precio</th>
+                                            <th>Cantidad</th>
+                                            <th>Subtotal</th>
+                                            <th>Acciones</th>
+                                        </tr>
 
-                                            <% for (ItemCarrito item : carrito.getItems()) {
-                                                Producto p = item.getProducto(); %>
-                                            <tr>
-                                                <td><%= p.getNombre() %></td>
-                                                <td>$<%= p.getPrecio() %></td>
-                                                <td>
-                                                    <form action="ActualizarCarrito" method="post" style="display:inline;">
-                                                        <input type="hidden" name="idProducto" value="<%= p.getId() %>"/>
-                                                        <input type="number" name="cantidad" value="<%= item.getCantidad() %>" min="1" />
-                                                        <input type="submit" value="Actualizar"/>
-                                                    </form>
-                                                </td>
-                                                <td>$<%= item.getSubtotal() %></td>
-                                                <td>
-                                                    <form action="EliminarDelCarrito" method="post" style="display:inline;">
-                                                    <input type="hidden" name="idProducto" value="<%= p.getId() %>"/>
+                                        <% for (ItemCarrito item : carrito.getItems()) {
+                                                Producto p = item.getProducto();%>
+                                        <tr>
+                                            <td><%= p.getNombre()%></td>
+                                            <td>$<%= p.getPrecio()%></td>
+                                            <td>
+                                                <form action="ActualizarCarrito" method="post" style="display:inline;">
+                                                    <input type="hidden" name="idProducto" value="<%= p.getId()%>"/>
+                                                    <input type="number" name="cantidad" value="<%= item.getCantidad()%>" min="1" />
+                                                    <input type="submit" value="Actualizar"/>
+                                                </form>
+                                            </td>
+                                            <td>$<%= item.getSubtotal()%></td>
+                                            <td>
+                                                <form action="EliminarDelCarrito" method="post" style="display:inline;">
+                                                    <input type="hidden" name="idProducto" value="<%= p.getId()%>"/>
                                                     <input type="submit" value="Eliminar"/>
-                                                    </form>
-                                                </td>
-                                            </tr>
-                                        <% } %>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                        <% }%>
                                         <tr>
                                             <td colspan="3" style="text-align:right;"><strong>Total:</strong></td>
-                                            <td colspan="2">$<%= carrito.getTotal() %></td>
+                                            <td colspan="2">$<%= carrito.getTotal()%></td>
                                         </tr>
                                     </table>
 
@@ -76,9 +78,9 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
                                         <input type="submit" class="buttons" value="Confirmar pedido"/>
                                     </form>
 
-                                <%  } else { %>
+                                    <%  } else { %>
                                     <p>🛍️ Tu carrito está vacío.</p>
-                                <% } %>
+                                    <% }%>
                                 </div>
                             </li>
                         </ul>
@@ -91,12 +93,10 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
                 <div class="row">
                     <div class="six columns">
                         <div class="contenido-hero">
-                            <h2>Aprende algo nuevo</h2>
-                            <p>Todos los cursos a $15</p>
-                            <form action="#" id="busqueda" method="post" class="formulario">
-                                <input class="u-full-width" type="text" placeholder="¿Que te gustaría Aprender?" id="buscador">
-                                <input type="submit" id="submit-buscador" class="submit-buscador">
-                            </form>
+                            <h1 id="encabezado" class="encabezado">
+                                Bienvenido ${sessionScope.usuario}, ¿En qué te podemos ayudar?
+                            </h1>
+
                         </div>
                     </div>
                 </div> 
@@ -122,23 +122,65 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
         </div>
         <!-- Aquí inician las cartas-->
         <div id="lista-cursos" class="container">
-            <h1 id="encabezado" class="encabezado">Cursos En Línea</h1>
-            <div class="row">
-                <div class="four columns">
-                    <div class="card">
-                        <img src="img/curso1.jpg" class="imagen-curso u-full-width">
-                        <div class="info-card">
-                            <h4>HTML5, CSS3, JavaScript para Principiantes</h4>
-                            <p>Juan Pedro</p>
-                            <img src="img/estrellas.png">
-                            <p class="precio">$200  <span class="u-pull-right ">$15</span></p>
-                            <a href="#" class="u-full-width button-primary button input agregar-carrito" data-id="1">Agregar Al Carrito</a>
+
+            <div class="container">
+                <div class="row prenda">
+                    <c:forEach var="prenda" items="${listaPrendas}">
+                        <div class="four columns">
+                            <div class="card">
+                                <img src="${prenda.imagen}" class="imagen-curso u-full-width" alt="Imagen de Prenda">
+                                <div class="info-card">
+                                    <h4>${prenda.tipoPrenda}</h4>
+                                    <form action="AgregarCarritoServlet" method="post">
+                                        <label for="talla_${prenda.idPrenda}">Talla:</label>
+                                        <select name="talla" id="talla_${prenda.idPrenda}" class="u-full-width">
+                                            <option value="XS">XS</option>
+                                            <option value="S">S</option>
+                                            <option value="M">M</option>
+                                            <option value="L">L</option>
+                                            <option value="XL">XL</option>
+                                        </select>
+
+                                        <label>Color:</label>
+                                        <div class="color-buttons">
+                                            <button type="button" class="color-btn" style="background-color: #000;" data-color="Negro"></button>
+                                            <button type="button" class="color-btn" style="background-color: #FFF;" data-color="Blanco"></button>
+                                            <button type="button" class="color-btn" style="background-color: #9c9c9c;" data-color="Gris"></button>
+                                            <button type="button" class="color-btn" style="background-color: #FF0000;" data-color="Rojo"></button>
+                                            <button type="button" class="color-btn" style="background-color: #3861ae;" data-color="Azul"></button>
+                                            <button type="button" class="color-btn" style="background-color: #18a376;" data-color="Verde"></button>
+                                        </div>
+
+                                        <label for="disenio_${prenda.idPrenda}">Diseño:</label>
+                                        <select name="disenio" id="disenio_${prenda.idPrenda}" class="u-full-width">
+                                            <option value="Basico">Básico</option>
+                                            <option value="Intermedio">Intermedio</option>
+                                            <option value="Pro">Pro</option>
+                                        </select>
+
+                                        <p class="precio">
+                                            <c:choose>
+                                                <c:when test="${sessionScope.tipoUsuario == 'Empresarial'}">
+                                                    Empresarial: $${prenda.costoEmpresarial}
+                                                </c:when>
+                                                <c:otherwise>
+                                                    Personal: $${prenda.costoPersonal}
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </p>
+
+                                        <input type="hidden" name="id_prenda" value="${prenda.idPrenda}">
+                                        <input type="submit" class="u-full-width button-primary button input agregar-carrito" value="Agregar Al Carrito">
+                                    </form>
+                                </div>
+                            </div>
                         </div>
-                    </div> <!--.card-->
+                    </c:forEach>
                 </div>
-            </div> <!--.row-->
-        </div>  
-        
+            </div>
+        </div>
+
+
         <footer id="footer" class="footer">
             <div class="container">
                 <div class="row">

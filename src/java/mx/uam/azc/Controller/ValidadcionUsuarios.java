@@ -45,6 +45,7 @@ public class ValidadcionUsuarios extends HttpServlet {
 
     /**
      * Handles the HTTP <code>POST</code> method.
+     * El método POST se utiliza para generar y/o mandar respuestas que utilizaremos más adelante
      *
      * @param request servlet request
      * @param response servlet response

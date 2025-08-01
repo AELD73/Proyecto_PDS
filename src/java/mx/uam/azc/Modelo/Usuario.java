@@ -69,8 +69,10 @@ public class Usuario {
 
     @Override
     public String toString() {
-        return  idUsr + ", " + nombre + ", " + correo + ", " + password + ", " + tipoUsr;
+        return  idUsr + " " + nombre + " " + correo + " " + password + " " + tipoUsr ;
     }
+
+    
     
     
     

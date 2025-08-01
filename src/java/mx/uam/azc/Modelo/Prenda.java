@@ -9,30 +9,20 @@ package mx.uam.azc.Modelo;
  * @author lopez
  */
 public abstract class Prenda {
-    private int id_prenda;
-    private int id_tipo_prenda;
-    private int id_color;
-    private int id_talla;
-    private String tipo_prenda;
-    private String color_prenda;
-    private String talla_prenda;
-    private double costo_empresarial;
-    private double costo_personal;
+    protected  int id_prenda;
+    protected  int id_tipo_prenda;
+    protected  int id_color;
+    protected  int id_talla;
+    protected  String tipo_prenda;
+    protected  String color_prenda;
+    protected  String talla_prenda;
+    protected  double costo_empresarial;
+    protected  double costo_personal;
 
-    public Prenda(int id_prenda, int id_tipo_prenda, int id_color, int id_talla, String tipo_prenda, String color_prenda, String talla_prenda, double costo_empresarial, double costo_personal) {
-        this.id_prenda = id_prenda;
-        this.id_tipo_prenda = id_tipo_prenda;
-        this.id_color = id_color;
-        this.id_talla = id_talla;
-        this.tipo_prenda = tipo_prenda;
-        this.color_prenda = color_prenda;
-        this.talla_prenda = talla_prenda;
-        this.costo_empresarial = costo_empresarial;
-        this.costo_personal = costo_personal;
-    }
     
     
-    private Prenda(){
+    
+    public Prenda(){
         
     }
 
@@ -110,12 +100,8 @@ public abstract class Prenda {
     
     //Métodos adicionales para esta clase abstracta
     
-    public String getDescription(){
-        return "";
-    }
+    abstract public String getDescription();
     
-    public double getPrecio(){
-        return 0.0;
-    }
+    abstract public double getPrecio();
     
 }

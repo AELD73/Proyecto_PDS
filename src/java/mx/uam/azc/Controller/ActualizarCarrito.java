@@ -27,11 +27,7 @@ public class ActualizarCarrito extends HttpServlet {
         HttpSession session = request.getSession();
         Carrito carrito = (Carrito) session.getAttribute("carrito");
 
-        if (carrito == null) {
-            carrito = new Carrito();
-        }
-
-        try {
+        if (carrito != null) {
             int idProducto = Integer.parseInt(request.getParameter("idProducto"));
             int cantidad = Integer.parseInt(request.getParameter("cantidad"));
 
@@ -40,11 +36,7 @@ public class ActualizarCarrito extends HttpServlet {
             } else {
                 carrito.actualizarCantidad(idProducto, cantidad);
             }
-
             session.setAttribute("carrito", carrito);
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
-            request.setAttribute("error", "Datos inválidos al actualizar el carrito.");
         }
 
         response.sendRedirect("index.jsp");

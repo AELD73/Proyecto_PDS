@@ -17,33 +17,30 @@ public class GestionCarrito extends HttpServlet {
 
         HttpSession session = request.getSession();
         Carrito carrito = (Carrito) session.getAttribute("carrito");
-
         if (carrito == null) {
             carrito = new Carrito();
         }
 
-        try {
-            int idProducto = Integer.parseInt(request.getParameter("idProducto"));
-            int cantidad = Integer.parseInt(request.getParameter("cantidad"));
+        int idProducto = Integer.parseInt(request.getParameter("idProducto"));
+        int cantidad = Integer.parseInt(request.getParameter("cantidad"));
 
-            try (Connection conn = ConexionBD.getConexion()) {
-                DAO_Producto dao = new DAO_Producto(conn);
-                Usuario usuario = (Usuario) session.getAttribute("usuario");
-                String tipo = (usuario != null) ? usuario.getTipoUsr() : "personal"; // default personal
-                Producto producto = dao.getProductoPorId(idProducto, tipo);
+        try (Connection conn = ConexionBD.getConexion()) {
+            DAO_Producto dao = new DAO_Producto(conn);
+            Usuario usuario = (Usuario) session.getAttribute("usuario");
+            String tipo = (usuario != null) ? usuario.getTipoUsr() : "personal";
+            Producto producto = dao.getProductoPorId(idProducto, tipo);
 
-                if (producto != null) {
-                    carrito.agregarProducto(producto, cantidad);
-                    session.setAttribute("carrito", carrito);
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (producto != null) {
+            carrito.agregarProducto(producto, cantidad);
+            session.setAttribute("carrito", carrito);
         }
-
-        response.sendRedirect("carrito.jsp");
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+
+    response.sendRedirect("index.jsp");
+
+}
 
     @Override
     public String getServletInfo() {

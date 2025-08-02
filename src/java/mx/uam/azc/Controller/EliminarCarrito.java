@@ -25,14 +25,9 @@ public class EliminarCarrito extends HttpServlet {
         Carrito carrito = (Carrito) session.getAttribute("carrito");
 
         if (carrito != null) {
-            try {
-                int idProducto = Integer.parseInt(request.getParameter("idProducto"));
-                carrito.eliminarProducto(idProducto);
-                session.setAttribute("carrito", carrito);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-                request.setAttribute("error", "ID de producto inválido.");
-            }
+            int idProducto = Integer.parseInt(request.getParameter("idProducto"));
+            carrito.eliminarProducto(idProducto);
+            session.setAttribute("carrito", carrito);
         }
 
         response.sendRedirect("index.jsp");

@@ -12,7 +12,8 @@ import java.util.Optional;
  * @author lopez
  */
 public interface DAO_Prenda <T>{
-    Optional<T> get(String correo, String password);
+    
+    Optional<T> get(int id_usuario);
     
     List<T> getAll();
     

@@ -10,21 +10,10 @@ package mx.uam.azc.Modelo;
  */
 public abstract class Prenda {
     protected  int id_prenda;
-    protected  int id_tipo_prenda;
-    protected  int id_color;
-    protected  int id_talla;
     protected  String tipo_prenda;
     protected  String color_prenda;
     protected  String talla_prenda;
-    protected  double costo_empresarial;
-    protected  double costo_personal;
-
-    
-    
-    
-    public Prenda(){
-        
-    }
+    protected  double costo;
 
     public int getId_prenda() {
         return id_prenda;
@@ -33,31 +22,6 @@ public abstract class Prenda {
     public void setId_prenda(int id_prenda) {
         this.id_prenda = id_prenda;
     }
-
-    public int getId_tipo_prenda() {
-        return id_tipo_prenda;
-    }
-
-    public void setId_tipo_prenda(int id_tipo_prenda) {
-        this.id_tipo_prenda = id_tipo_prenda;
-    }
-
-    public int getId_color() {
-        return id_color;
-    }
-
-    public void setId_color(int id_color) {
-        this.id_color = id_color;
-    }
-
-    public int getId_talla() {
-        return id_talla;
-    }
-
-    public void setId_talla(int id_talla) {
-        this.id_talla = id_talla;
-    }
-
     public String getTipo_prenda() {
         return tipo_prenda;
     }
@@ -82,20 +46,12 @@ public abstract class Prenda {
         this.talla_prenda = talla_prenda;
     }
 
-    public double getCosto_empresarial() {
-        return costo_empresarial;
+    public double getCosto() {
+        return costo;
     }
 
-    public void setCosto_empresarial(double costo_empresarial) {
-        this.costo_empresarial = costo_empresarial;
-    }
-
-    public double getCosto_personal() {
-        return costo_personal;
-    }
-
-    public void setCosto_personal(double costo_personal) {
-        this.costo_personal = costo_personal;
+    public void setCosto(double costo) {
+        this.costo = costo;
     }
     
     //Métodos adicionales para esta clase abstracta

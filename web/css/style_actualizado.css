@@ -276,9 +276,6 @@ header.header {
 .info-card {
   padding: 10px 20px;
 }
-.precio {
-  text-decoration: line-through;
-}
 .precio span {
   font-weight: bold;
   font-size: 1.8rem;

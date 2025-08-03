@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
+
 import mx.uam.azc.Modelo.*;
 
 @WebServlet(name = "GestionCarrito", urlPatterns = {"/GestionCarrito"})
@@ -18,35 +19,33 @@ public class GestionCarrito extends HttpServlet {
         HttpSession session = request.getSession();
         Carrito carrito = (Carrito) session.getAttribute("carrito");
 
-        if (carrito == null) {
-            carrito = new Carrito();
-        }
+        int idProducto = Integer.parseInt(request.getParameter("idProducto"));
+        int cantidad = Integer.parseInt(request.getParameter("cantidad"));
 
-        try {
-            int idProducto = Integer.parseInt(request.getParameter("idProducto"));
-            int cantidad = Integer.parseInt(request.getParameter("cantidad"));
+        try (Connection conn = ConexionBD.getConexion()) {
+            CarritoDAO carritoDAO = new CarritoDAO(conn);
 
-            try (Connection conn = ConexionBD.getConexion()) {
-                ProductoDAO dao = new ProductoDAO(conn);
-                Usuario usuario = (Usuario) session.getAttribute("usuario");
-                String tipo = (usuario != null) ? usuario.getTipoUsr() : "personal"; // default personal
-                Producto producto = dao.getProductoPorId(idProducto, tipo);
-
-                if (producto != null) {
-                    carrito.agregarProducto(producto, cantidad);
-                    session.setAttribute("carrito", carrito);
-                }
+            if (carrito == null) {
+                carrito = new Carrito();
+                carrito.addObserver(new InventarioObservador(conn));
+                session.setAttribute("carrito", carrito);
             }
 
-        } catch (Exception e) {
+            Usuario usuario = (Usuario) session.getAttribute("usuario");
+            String tipoUsuario = (usuario != null) ? usuario.getTipoUsr() : "personal";
+
+            Producto producto = carritoDAO.getProductoPorId(idProducto, tipoUsuario);
+
+            if (producto != null && producto.getStock() >= cantidad) {
+                carrito.agregarProducto(producto, cantidad);
+            }
+
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        response.sendRedirect("carrito.jsp");
-    }
-
-    @Override
-    public String getServletInfo() {
-        return "Servlet para la gestión del carrito de compras";
+        response.sendRedirect("index.jsp");
     }
 }
+
+

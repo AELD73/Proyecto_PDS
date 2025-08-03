@@ -66,23 +66,30 @@ public class MostrarPrendasServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-         HttpSession session = request.getSession(false);
-        
+          HttpSession session = request.getSession();
         if (session == null || session.getAttribute("usuario") == null) {
             response.sendRedirect("login.jsp");
             return;
         }
 
+        // Recuperar tipo de usuario
         Usuario usuario = (Usuario) session.getAttribute("usuario");
         String tipoUsuario = usuario.getTipoUsr();
 
         try (Connection conn = ConexionBD.getConexion()) {
-            PrendaDAO DAO = new PrendaDAO(conn, tipoUsuario);
-            List<Prenda> prendas = DAO.getAll();
-            request.setAttribute("listaPrendas", prendas);
+            // DAO con lógica de precios por tipo de usuario
+            PrendaDAO dao = new PrendaDAO(conn, tipoUsuario);
+            List<Prenda> listaPrendas = dao.getAll();
+
+            // Pasar datos a la vista
+            request.setAttribute("listaPrendas", listaPrendas);
+            session.setAttribute("tipoUsuario", tipoUsuario); // útil para JSTL
+
+            // Redirigir a index.jsp
             request.getRequestDispatcher("index.jsp").forward(request, response);
+
         } catch (SQLException e) {
-            throw new ServletException("Error al recuperar prendas", e);
+            throw new ServletException("Error al recuperar las prendas del inventario", e);
         }
     }
 
@@ -97,7 +104,7 @@ public class MostrarPrendasServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        
     }
 
     /**

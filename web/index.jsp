@@ -128,12 +128,12 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
                     <c:forEach var="prenda" items="${listaPrendas}">
                         <div class="four columns">
                             <div class="card">
-                                <img src="${prenda.imagen}" class="imagen-curso u-full-width" alt="Imagen de Prenda">
+                                <img src="img/${prenda.tipo_prenda}.webp" class="imagen-curso u-full-width" alt="Imagen de Prenda">
                                 <div class="info-card">
-                                    <h4>${prenda.tipoPrenda}</h4>
+                                    <h4>${prenda.tipo_prenda}</h4>
                                     <form action="AgregarCarritoServlet" method="post">
-                                        <label for="talla_${prenda.idPrenda}">Talla:</label>
-                                        <select name="talla" id="talla_${prenda.idPrenda}" class="u-full-width">
+                                        <label for="talla_${prenda.id_prenda}">Talla:</label>
+                                        <select name="talla" id="talla_${prenda.id_prenda}" class="u-full-width">
                                             <option value="XS">XS</option>
                                             <option value="S">S</option>
                                             <option value="M">M</option>
@@ -151,25 +151,25 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
                                             <button type="button" class="color-btn" style="background-color: #18a376;" data-color="Verde"></button>
                                         </div>
 
-                                        <label for="disenio_${prenda.idPrenda}">Diseño:</label>
-                                        <select name="disenio" id="disenio_${prenda.idPrenda}" class="u-full-width">
+                                        <label for="disenio_${prenda.id_prenda}">Diseño:</label>
+                                        <select name="disenio" id="disenio_${prenda.id_prenda}" class="u-full-width">
                                             <option value="Basico">Básico</option>
                                             <option value="Intermedio">Intermedio</option>
-                                            <option value="Pro">Pro</option>
+                                            <option value="Pro">Pro</option>~~~~
                                         </select>
 
                                         <p class="precio">
                                             <c:choose>
                                                 <c:when test="${sessionScope.tipoUsuario == 'Empresarial'}">
-                                                    Empresarial: $${prenda.costoEmpresarial}
+                                                    Empresarial: $${prenda.costo}
                                                 </c:when>
                                                 <c:otherwise>
-                                                    Personal: $${prenda.costoPersonal}
+                                                    Personal: $${prenda.costo}
                                                 </c:otherwise>
                                             </c:choose>
                                         </p>
 
-                                        <input type="hidden" name="id_prenda" value="${prenda.idPrenda}">
+                                        <input type="hidden" name="id_prenda" value="${prenda.id_prenda}">
                                         <input type="submit" class="u-full-width button-primary button input agregar-carrito" value="Agregar Al Carrito">
                                     </form>
                                 </div>

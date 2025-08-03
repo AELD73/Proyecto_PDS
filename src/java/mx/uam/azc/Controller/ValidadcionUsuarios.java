@@ -40,7 +40,7 @@ public class ValidadcionUsuarios extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        
     }
 
     /**
@@ -67,7 +67,7 @@ public class ValidadcionUsuarios extends HttpServlet {
                 HttpSession session = request.getSession();
                 session.setAttribute("usuario", usuario.get());
                 String base = request.getContextPath();
-                response.sendRedirect(base+"/index.jsp"); // página de bienvenida
+                response.sendRedirect(base+"/MostrarPrendasServlet"); // página de bienvenida
             } else {
                 request.setAttribute("error", "Correo o contraseña inválidos");
                 request.getRequestDispatcher("login.jsp").forward(request, response);

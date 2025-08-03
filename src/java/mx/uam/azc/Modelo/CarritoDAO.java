@@ -21,25 +21,18 @@ public class CarritoDAO {
     }
 
     public Producto getProductoPorId(int idProducto, String tipoUsuario) throws SQLException {
-        String sql = "SELECT id_producto, nombre, stock, precio_personal, precio_empresarial " +
-                     "FROM producto WHERE id_producto = ?";
+    String sql = "SELECT id_producto, nombre, stock, precio_personal, precio_empresarial " +
+                 "FROM producto WHERE id_producto = ?";
         try (PreparedStatement ps = conexion.prepareStatement(sql)) {
             ps.setInt(1, idProducto);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                Producto producto = new Producto();
-                producto.setId(rs.getInt("id_producto"));
-                producto.setNombre(rs.getString("nombre"));
-                producto.setStock(rs.getInt("stock"));
-                double precio = tipoUsuario.equalsIgnoreCase("empresarial") ?
-                        rs.getDouble("precio_empresarial") :
-                        rs.getDouble("precio_personal");
-                producto.setPrecio(precio);
-                return producto;
+                return ProductoFactory.crearProducto(rs, tipoUsuario);
             }
         }
         return null;
     }
+
 
     public void actualizarStock(int idProducto, int cambio) throws SQLException {
         String sql = "UPDATE producto SET stock = stock + ? WHERE id_producto = ?";

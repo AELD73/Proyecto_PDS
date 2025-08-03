@@ -48,4 +48,3 @@ public class GestionCarrito extends HttpServlet {
     }
 }
 
-

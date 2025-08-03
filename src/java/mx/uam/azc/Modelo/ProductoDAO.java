@@ -5,6 +5,8 @@
 package mx.uam.azc.Modelo;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProductoDAO {
 
@@ -14,30 +16,64 @@ public class ProductoDAO {
         this.conexion = conexion;
     }
 
-    public Producto getProductoPorId(int idProducto, String tipoUsuario) {
-        String query = "SELECT id_producto, nombre, precio_personal, precio_empresarial FROM producto WHERE id_producto = ?";
-        try (PreparedStatement stmt = conexion.prepareStatement(query)) {
-            stmt.setInt(1, idProducto);
-            ResultSet rs = stmt.executeQuery();
+    /**
+     * Obtiene un producto por ID y tipo de usuario (personal/empresarial)
+     */
+    public Producto getProductoPorId(int idProducto, String tipoUsuario) throws SQLException {
+        String sql = "SELECT id_producto, nombre, stock, precio_personal, precio_empresarial " +
+                     "FROM producto WHERE id_producto = ?";
+        try (PreparedStatement ps = conexion.prepareStatement(sql)) {
+            ps.setInt(1, idProducto);
+            ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                Producto producto = new Producto();
-                producto.setId(rs.getInt("id_producto"));
-                producto.setNombre(rs.getString("nombre"));
-
-                double precio;
-                if ("empresarial".equalsIgnoreCase(tipoUsuario)) {
-                    precio = rs.getDouble("precio_empresarial");
-                } else {
-                    precio = rs.getDouble("precio_personal");
-                }
-
-                producto.setPrecio(precio);
-                return producto;
+                Producto p = new Producto();
+                p.setId(rs.getInt("id_producto"));
+                p.setNombre(rs.getString("nombre"));
+                p.setStock(rs.getInt("stock"));
+                double precio = tipoUsuario.equalsIgnoreCase("empresarial") ?
+                        rs.getDouble("precio_empresarial") :
+                        rs.getDouble("precio_personal");
+                p.setPrecio(precio);
+                return p;
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * Actualiza el stock de un producto sumando o restando cantidad
+     * Puede usarse por el observador directamente
+     */
+    public void actualizarStock(int idProducto, int cambio) throws SQLException {
+        String sql = "UPDATE producto SET stock = stock + ? WHERE id_producto = ?";
+        try (PreparedStatement ps = conexion.prepareStatement(sql)) {
+            ps.setInt(1, cambio);
+            ps.setInt(2, idProducto);
+            ps.executeUpdate();
+        }
+    }
+
+    /**
+     * Lista todos los productos para mostrar un catálogo dinámico
+     */
+    public List<Producto> getAllProductos(String tipoUsuario) throws SQLException {
+        List<Producto> productos = new ArrayList<>();
+        String sql = "SELECT id_producto, nombre, stock, precio_personal, precio_empresarial FROM producto";
+        try (PreparedStatement ps = conexion.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Producto p = new Producto();
+                p.setId(rs.getInt("id_producto"));
+                p.setNombre(rs.getString("nombre"));
+                p.setStock(rs.getInt("stock"));
+                double precio = tipoUsuario.equalsIgnoreCase("empresarial") ?
+                        rs.getDouble("precio_empresarial") :
+                        rs.getDouble("precio_personal");
+                p.setPrecio(precio);
+                productos.add(p);
+            }
+        }
+        return productos;
     }
 }
 

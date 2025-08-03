@@ -28,6 +28,12 @@ public class ItemCarrito {
     public double getSubtotal() {
         return producto.getPrecio() * cantidad;
     }
+    
+    @Override
+    public String toString() {
+        return producto.getNombre() + " x" + cantidad + " = $" + getSubtotal();
+    }
 }
+
 
 

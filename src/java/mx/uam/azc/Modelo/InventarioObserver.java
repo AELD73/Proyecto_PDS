@@ -4,8 +4,6 @@
  */
 package mx.uam.azc.Modelo;
 
-import mx.uam.azc.Modelo.ConexionBD;
-import mx.uam.azc.Modelo.PrendaDAO;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Level;
@@ -15,8 +13,9 @@ import java.util.logging.Logger;
  *
  * @author Victor
  */
-public class InventarioObserver implements Observer {
 
+public class InventarioObserver implements Observer {
+    
     @Override
     public void update(int idPrenda, int idTalla, int idColor, int cantidad) {
         try (Connection conn = ConexionBD.getConexion()) {

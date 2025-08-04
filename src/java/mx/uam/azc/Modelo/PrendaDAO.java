@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.sql.*;
-import java.util.*;
 
 /**
  *
@@ -32,7 +31,7 @@ public class PrendaDAO implements DAO_Prenda<Prenda>{
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
-    
+    @Override
     public PrendaBase obtenerPorId(int id_prenda) throws SQLException {
         PrendaBase prenda = null;
         String sql = """
@@ -123,7 +122,21 @@ public List<Prenda> getAll() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
     
-     // Método modificado para actualizar la tabla Inventario
+    @Override
+    public int obtenerIdColor(int idPrenda) throws SQLException {
+        String sql = "SELECT id_color FROM Prenda WHERE id_prenda = ?";
+        try (PreparedStatement ps = conexion.prepareStatement(sql)) {
+            ps.setInt(1, idPrenda);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id_color");
+                }
+            }
+        }
+        return -1;
+    }
+    
+    @Override
     public void actualizarStock(int idPrenda, int idTalla, int idColor, int cantidad) throws SQLException {
         String sql = """
             UPDATE Inventario 
@@ -139,17 +152,5 @@ public List<Prenda> getAll() {
         }
     }
     
-    public int obtenerIdColor(int idPrenda) throws SQLException {
-        String sql = "SELECT id_color FROM Prenda WHERE id_prenda = ?";
-        try (PreparedStatement ps = conexion.prepareStatement(sql)) {
-            ps.setInt(1, idPrenda);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt("id_color");
-                }
-            }
-        }
-        return -1;
-    }
-
 }
+

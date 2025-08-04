@@ -69,7 +69,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
                                                                 <td>
                                                                     <form action="EliminarItemCarrito" method="post" style="display:inline;">
                                                                         <input type="hidden" name="idItem" value="${item.idItem}"/>
-                                                                        <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                                                                        <input type="submit" value="Eliminar"/>
                                                                     </form>
                                                                 </td>
                                                             </tr>
@@ -84,7 +84,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
                                                 </table>
 
                                                 <form action="ConfirmarPedido" method="post">
-                                                    <button type="submit">Confirmar Pedido</button>
+                                                    <input type="submit" class="buttons" value="Confirmar pedido"/>
                                                 </form>
                                             </c:if>
                                         </c:when>

@@ -12,9 +12,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import mx.uam.azc.Modelo.Usuario;
 import java.sql.*;
 import java.util.List;
-import mx.uam.azc.Modelo.*;
+import mx.uam.azc.Modelo.CarritoDAO;
+import mx.uam.azc.Modelo.ConexionBD;
+import mx.uam.azc.Modelo.DAO_Prenda;
+import mx.uam.azc.Modelo.ItemCarrito;
+import mx.uam.azc.Modelo.Prenda;
+import mx.uam.azc.Modelo.PrendaBase;
+import mx.uam.azc.Modelo.PrendaDAO;
 
 /**
  *
@@ -75,12 +82,11 @@ public class MostrarPrendasServlet extends HttpServlet {
             // DAO con lógica de precios por tipo de usuario
             PrendaDAO dao = new PrendaDAO(conn, tipoUsuario);
             List<Prenda> listaPrendas = dao.getAll();
-            
+
             // Lógica para CARGAR EL CARRITO
-            CarritoDAO carritoDAO = new CarritoDAO(conn);
+            CarritoDAO carritoDAO = new CarritoDAO(conn, dao);
             int idCarrito = carritoDAO.obtenerOCrearCarrito(usuario.getIdUsr());
             List<ItemCarrito> items = carritoDAO.listarItems(idCarrito);
-            
             // Pasar datos a la vista
             request.setAttribute("listaPrendas", listaPrendas);
             request.setAttribute("carritoItems", items);

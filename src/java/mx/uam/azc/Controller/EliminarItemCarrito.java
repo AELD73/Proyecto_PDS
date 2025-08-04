@@ -4,15 +4,9 @@ import mx.uam.azc.Modelo.*;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import mx.uam.azc.Modelo.Usuario;
+import javax.servlet.http.*;
 
 /**
  *
@@ -21,32 +15,29 @@ import mx.uam.azc.Modelo.Usuario;
 
 @WebServlet(name = "EliminarItemCarrito", urlPatterns = {"/EliminarItemCarrito"})
 public class EliminarItemCarrito extends HttpServlet {
-    
-    private static final Logger LOGGER = Logger.getLogger(EliminarItemCarrito.class.getName());
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        Usuario usuario = (Usuario) session.getAttribute("usuario");
-        
-        if (usuario == null) {
-            response.sendRedirect("login.jsp");
-            return;
-        }
+
+        int idItem = Integer.parseInt(request.getParameter("idItem"));
 
         try (Connection conn = ConexionBD.getConexion()) {
+            HttpSession session = request.getSession();
             String tipoUsuario = (String) session.getAttribute("tipoUsuario");
+                
+            // 1. Se crea la instancia de PrendaDAO primero.
             PrendaDAO prendaDAO = new PrendaDAO(conn, tipoUsuario);
-            CarritoDAO carritoDAO = new CarritoDAO(conn);
+            CarritoDAO carritoDAO = new CarritoDAO(conn,prendaDAO);
             
-            int idItem = Integer.parseInt(request.getParameter("id_item"));
+            // Aquí se adjunta el observador
+            carritoDAO.attach(new InventarioObserver());
             carritoDAO.eliminarItem(idItem);
-            
-            response.sendRedirect("MostrarCarritoServlet");
+
+            response.sendRedirect("MostrarPrendasServlet");
+
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error al eliminar item del carrito", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error al eliminar el item del carrito.");
+            throw new ServletException("Error al eliminar item del carrito", e);
         }
     }
 }

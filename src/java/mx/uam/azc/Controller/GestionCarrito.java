@@ -41,8 +41,9 @@ public class GestionCarrito extends HttpServlet {
             ItemCarrito item = new ItemCarrito();
             item.setIdCarrito(idCarrito);
 
-            Producto prenda = new Producto();
-            prenda.setId(idPrenda);
+            // Crear la prenda básica
+            PrendaBase prenda = new PrendaBase();
+            prenda.setId_prenda(idPrenda);
             item.setPrenda(prenda);
 
             Disenio disenio = new Disenio();
@@ -58,10 +59,11 @@ public class GestionCarrito extends HttpServlet {
 
             carritoDAO.insertarItem(item);
 
-            response.sendRedirect("index.jsp");
+            response.sendRedirect("MostrarCarrito"); // redirige para ver items
 
         } catch (SQLException e) {
             throw new ServletException("Error al agregar item al carrito", e);
         }
     }
 }
+

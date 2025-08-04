@@ -66,6 +66,7 @@ public class ValidadcionUsuarios extends HttpServlet {
             if (usuario.isPresent()) {
                 HttpSession session = request.getSession();
                 session.setAttribute("usuario", usuario.get());
+                
                 String base = request.getContextPath();
                 response.sendRedirect(base+"/MostrarPrendasServlet"); // página de bienvenida
             } else {

@@ -137,7 +137,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
                                 <img src="img/${prenda.tipo_prenda}.webp" class="imagen-curso u-full-width" alt="Imagen de Prenda">
                                 <div class="info-card">
                                     <h4>${prenda.tipo_prenda}</h4>
-                                    <form action="AgregarCarritoServlet" method="post">
+                                    <form action="MostrarCarrito" method="post">
                                         <label for="talla_${prenda.id_prenda}">Talla:</label>
                                         <select name="talla" id="talla_${prenda.id_prenda}" class="u-full-width">
                                             <option value="XS">XS</option>

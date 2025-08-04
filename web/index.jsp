@@ -26,61 +26,67 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
                             <li class="submenu">
                                 <img src="img/cart.png" id="img-carrito">
                                 <div id="carrito">
+                                    <c:choose>
+                                        <c:when test="${not empty sessionScope.usuario}">
+                                            <c:set var="carritoItems" value="${requestScope.carritoItems}" />
+                                            <c:if test="${empty carritoItems}">
+                                                <p>🛍️ Tu carrito está vacío.</p>
+                                            </c:if>
 
-                                    <%@ page import="java.util.List" %>
-                                    <%@ page import="mx.uam.azc.Modelo.Carrito" %>
-                                    <%@ page import="mx.uam.azc.Modelo.ItemCarrito" %>
-                                    <%@ page import="mx.uam.azc.Modelo.Producto" %>
+                                            <c:if test="${not empty carritoItems}">
+                                                <h2>🛒 Tu Carrito</h2>
+                                                <table border="1">
+                                                    <tr>
+                                                        <th>Prenda</th>
+                                                        <th>Color</th>
+                                                        <th>Talla</th>
+                                                        <th>Diseño</th>
+                                                        <th>Cantidad</th>
+                                                        <th>Subtotal</th>
+                                                        <th>Acciones</th>
+                                                    </tr>
+                                                    <c:set var="total" value="0" />
+                                                    <c:forEach var="item" items="${carritoItems}">
+                                                        <tr>
+                                                            <td>${item.prenda.tipoPrenda} - ${item.prenda.tipo}</td>
+                                                            <td>${item.prenda.color}</td>
+                                                            <td>${item.talla.nombre}</td>
+                                                            <td>${item.disenio.nombre}</td>
+                                                            <td>
+                                                                <form action="ActualizarItemCarrito" method="post" style="display:inline;">
+                                                                    <input type="hidden" name="idItem" value="${item.idItem}" />
+                                                                    <input type="hidden" name="idTalla" value="${item.talla.id}" />
+                                                                    <input type="hidden" name="idDisenio" value="${item.disenio.id}" />
+                                                                    <input type="number" name="cantidad" value="${item.cantidad}" min="1" />
+                                                                    <input type="hidden" name="subtotal" value="${item.subtotal}" />
+                                                                    <input type="submit" value="Actualizar"/>
+                                                                </form>
+                                                            </td>
+                                                            <td>$${item.subtotal}</td>
+                                                            <td>
+                                                                <form action="EliminarItemCarrito" method="post" style="display:inline;">
+                                                                    <input type="hidden" name="idItem" value="${item.idItem}"/>
+                                                                    <input type="submit" value="Eliminar"/>
+                                                                </form>
+                                                            </td>
+                                                        </tr>
+                                                        <c:set var="total" value="${total + item.subtotal}" />
+                                                    </c:forEach>
+                                                    <tr>
+                                                        <td colspan="5" style="text-align:right;"><strong>Total:</strong></td>
+                                                        <td colspan="2">$${total}</td>
+                                                    </tr>
+                                                </table>
 
-                                    <%
-                                        Carrito carrito = (Carrito) session.getAttribute("carrito");
-                                        if (carrito != null && !carrito.getItems().isEmpty()) {
-                                    %>
-
-                                    <h2>🛒 Tu Carrito</h2>
-                                    <table border="1">
-                                        <tr>
-                                            <th>Producto</th>
-                                            <th>Precio</th>
-                                            <th>Cantidad</th>
-                                            <th>Subtotal</th>
-                                            <th>Acciones</th>
-                                        </tr>
-
-                                        <% for (ItemCarrito item : carrito.getItems()) {
-                                                Producto p = item.getProducto();%>
-                                        <tr>
-                                            <td><%= p.getNombre()%></td>
-                                            <td>$<%= p.getPrecio()%></td>
-                                            <td>
-                                                <form action="ActualizarCarrito" method="post" style="display:inline;">
-                                                    <input type="hidden" name="idProducto" value="<%= p.getId()%>"/>
-                                                    <input type="number" name="cantidad" value="<%= item.getCantidad()%>" min="1" />
-                                                    <input type="submit" value="Actualizar"/>
+                                                <form action="ConfirmarPedido" method="post">
+                                                    <input type="submit" class="buttons" value="Confirmar pedido"/>
                                                 </form>
-                                            </td>
-                                            <td>$<%= item.getSubtotal()%></td>
-                                            <td>
-                                                <form action="EliminarDelCarrito" method="post" style="display:inline;">
-                                                    <input type="hidden" name="idProducto" value="<%= p.getId()%>"/>
-                                                    <input type="submit" value="Eliminar"/>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                        <% }%>
-                                        <tr>
-                                            <td colspan="3" style="text-align:right;"><strong>Total:</strong></td>
-                                            <td colspan="2">$<%= carrito.getTotal()%></td>
-                                        </tr>
-                                    </table>
-
-                                    <form action="ConfirmarPedido" method="post">
-                                        <input type="submit" class="buttons" value="Confirmar pedido"/>
-                                    </form>
-
-                                    <%  } else { %>
-                                    <p>🛍️ Tu carrito está vacío.</p>
-                                    <% }%>
+                                            </c:if>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <p>Por favor <a href="login.jsp">inicia sesión</a> para usar el carrito.</p>
+                                        </c:otherwise>
+                                    </c:choose>
                                 </div>
                             </li>
                         </ul>

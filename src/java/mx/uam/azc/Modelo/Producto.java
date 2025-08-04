@@ -4,41 +4,53 @@
  */
 package mx.uam.azc.Modelo;
 
+/**
+ *
+ * @author Victor
+ */
+
 public class Producto {
     private int id;
-    private String nombre;
-    private double precio;
+    private String tipoPrenda; // Camisa, Sudadera
+    private String tipo;       // Oversize, Con gorro...
+    private String color;
+    private double costoPersonal;
+    private double costoEmpresarial;
 
-    public Producto() {}
-
-    public Producto(int id, String nombre, double precio) {
-        this.id = id;
-        this.nombre = nombre;
-        this.precio = precio;
+    public int getId() { 
+        return id; 
     }
-
-    public int getId() {
-        return id;
+    public void setId(int id) { 
+        this.id = id; 
     }
-
-    public void setId(int id) {
-        this.id = id;
+    public String getTipoPrenda() { 
+        return tipoPrenda; 
     }
-
-    public String getNombre() {
-        return nombre;
+    public void setTipoPrenda(String tipoPrenda) { 
+        this.tipoPrenda = tipoPrenda; 
     }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public String getTipo() {
+        return tipo; 
     }
-
-    public double getPrecio() {
-        return precio;
+    public void setTipo(String tipo) {
+        this.tipo = tipo; 
     }
-
-    public void setPrecio(double precio) {
-        this.precio = precio;
+    public String getColor() {
+        return color; 
+    }
+    public void setColor(String color) { 
+        this.color = color; 
+    }
+    public double getCostoPersonal() {
+        return costoPersonal; 
+    }
+    public void setCostoPersonal(double costoPersonal) {
+        this.costoPersonal = costoPersonal; 
+    }
+    public double getCostoEmpresarial() { 
+        return costoEmpresarial; 
+    }
+    public void setCostoEmpresarial(double costoEmpresarial) { 
+        this.costoEmpresarial = costoEmpresarial; 
     }
 }
-

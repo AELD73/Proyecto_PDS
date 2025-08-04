@@ -1,73 +1,62 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package mx.uam.azc.Controller;
 
 import mx.uam.azc.Modelo.*;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.List;
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
-import java.io.IOException;
-import java.sql.*;
-import java.time.LocalDate;
+
+/**
+ *
+ * @author Victor
+ */
 
 @WebServlet(name = "ConfirmarPedido", urlPatterns = {"/ConfirmarPedido"})
 public class ConfirmarPedido extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
+            throws ServletException, IOException {
+
         HttpSession session = request.getSession();
-        Carrito carrito = (Carrito) session.getAttribute("carrito");
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        if (carrito == null || carrito.getItems().isEmpty() || usuario == null) {
-            response.sendRedirect("index.jsp");
+        if (usuario == null) {
+            response.sendRedirect("login.jsp");
             return;
         }
 
         try (Connection conn = ConexionBD.getConexion()) {
-            conn.setAutoCommit(false);
+            CarritoDAO carritoDAO = new CarritoDAO(conn);
+            PedidoDAO pedidoDAO = new PedidoDAO(conn);
 
-            String sqlPedido = "INSERT INTO pedido(id_usuario, fecha, total) VALUES (?, ?, ?)";
-            try (PreparedStatement psPedido = conn.prepareStatement(sqlPedido, Statement.RETURN_GENERATED_KEYS)) {
-                psPedido.setInt(1, usuario.getIdUsr());
-                psPedido.setDate(2, Date.valueOf(LocalDate.now()));
-                psPedido.setDouble(3, carrito.getTotal());
-                psPedido.executeUpdate();
+            int idCarrito = carritoDAO.obtenerOCrearCarrito(usuario.getIdUsr());
+            List<ItemCarrito> items = carritoDAO.listarItems(idCarrito);
 
-                ResultSet rs = psPedido.getGeneratedKeys();
-                int idPedido = -1;
-                if (rs.next()) {
-                    idPedido = rs.getInt(1);
-                }
-
-                String sqlDetalle = "INSERT INTO detalle_pedido(id_pedido, id_producto, cantidad, subtotal) VALUES (?, ?, ?, ?)";
-                try (PreparedStatement psDetalle = conn.prepareStatement(sqlDetalle)) {
-                    for (ItemCarrito item : carrito.getItems()) {
-                        psDetalle.setInt(1, idPedido);
-                        psDetalle.setInt(2, item.getProducto().getId());
-                        psDetalle.setInt(3, item.getCantidad());
-                        psDetalle.setDouble(4, item.getSubtotal());
-                        psDetalle.addBatch();
-                    }
-                    psDetalle.executeBatch();
-                }
-
-                conn.commit();
-                session.removeAttribute("carrito");
-                response.sendRedirect("pedido_confirmado.jsp");
+            if (items.isEmpty()) {
+                response.sendRedirect("index.jsp");
+                return;
             }
 
+            // Crear pedido con Factory
+            Pedido pedido = PedidoFactory.crearPedido(usuario.getIdUsr(), items);
+
+            // Guardar pedido y detalles
+            int idPedido = pedidoDAO.registrarPedido(pedido);
+            pedidoDAO.registrarDetallePedido(idPedido, items);
+
+            // Limpiar carrito
+            pedidoDAO.limpiarCarrito(idCarrito);
+
+            // Guardar detalles en sesión para mostrar en resumen
+            session.setAttribute("pedidoConfirmado", pedido);
+            response.sendRedirect("resumenPedido.jsp");
+
         } catch (SQLException e) {
-            e.printStackTrace();
-            response.sendRedirect("error.jsp");
+            throw new ServletException("Error al confirmar pedido", e);
         }
     }
-
-    @Override
-    public String getServletInfo() {
-        return "Confirma un pedido y lo guarda en la base de datos";
-    }
 }
-

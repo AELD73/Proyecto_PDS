@@ -4,30 +4,38 @@
  */
 package mx.uam.azc.Modelo;
 
+/**
+ *
+ * @author Victor
+ */
+
 public class ItemCarrito {
-    private Producto producto;
+    private int idItem;
+    private int idCarrito;
+    private Producto prenda;
+    private Disenio disenio;
+    private Talla talla;
     private int cantidad;
+    private double subtotal;
 
-    public ItemCarrito(Producto producto, int cantidad) {
-        this.producto = producto;
-        this.cantidad = cantidad;
-    }
+    public int getIdItem() { return idItem; }
+    public void setIdItem(int idItem) { this.idItem = idItem; }
 
-    public Producto getProducto() {
-        return producto;
-    }
+    public int getIdCarrito() { return idCarrito; }
+    public void setIdCarrito(int idCarrito) { this.idCarrito = idCarrito; }
 
-    public int getCantidad() {
-        return cantidad;
-    }
+    public Producto getPrenda() { return prenda; }
+    public void setPrenda(Producto prenda) { this.prenda = prenda; }
 
-    public void setCantidad(int cantidad) {
-        this.cantidad = cantidad;
-    }
+    public Disenio getDisenio() { return disenio; }
+    public void setDisenio(Disenio disenio) { this.disenio = disenio; }
 
-    public double getSubtotal() {
-        return producto.getPrecio() * cantidad;
-    }
+    public Talla getTalla() { return talla; }
+    public void setTalla(Talla talla) { this.talla = talla; }
+
+    public int getCantidad() { return cantidad; }
+    public void setCantidad(int cantidad) { this.cantidad = cantidad; }
+
+    public double getSubtotal() { return subtotal; }
+    public void setSubtotal(double subtotal) { this.subtotal = subtotal; }
 }
-
-

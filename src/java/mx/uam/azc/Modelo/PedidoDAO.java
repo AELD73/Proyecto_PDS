@@ -4,70 +4,58 @@
  */
 package mx.uam.azc.Modelo;
 
-/**
- *
- * @author CASH
- */
-
 import java.sql.*;
-import java.time.LocalDate;
 import java.util.List;
 
+/**
+ *
+ * @author Victor
+ */
+
 public class PedidoDAO {
+    private final Connection conn;
 
-    private final Connection conexion;
-
-    public PedidoDAO(Connection conexion) {
-        this.conexion = conexion;
+    public PedidoDAO(Connection conn) {
+        this.conn = conn;
     }
 
-    public boolean registrarPedido(Usuario usuario, Carrito carrito) throws SQLException {
-        boolean exito = false;
-        try {
-            conexion.setAutoCommit(false);
-
-            // Insertar en tabla pedido
-            String sqlPedido = "INSERT INTO pedido(id_usuario, fecha, total) VALUES (?, ?, ?)";
-            int idPedido;
-
-            try (PreparedStatement psPedido = conexion.prepareStatement(sqlPedido, Statement.RETURN_GENERATED_KEYS)) {
-                psPedido.setInt(1, usuario.getIdUsr());
-                psPedido.setDate(2, Date.valueOf(LocalDate.now()));
-                psPedido.setDouble(3, carrito.getTotal());
-                psPedido.executeUpdate();
-
-                ResultSet rs = psPedido.getGeneratedKeys();
-                if (rs.next()) {
-                    idPedido = rs.getInt(1);
-                } else {
-                    throw new SQLException("No se pudo obtener el ID del pedido.");
-                }
-            }
-
-            // Insertar en tabla detalle_pedido
-            String sqlDetalle = "INSERT INTO detalle_pedido(id_pedido, id_producto, cantidad, subtotal) VALUES (?, ?, ?, ?)";
-            try (PreparedStatement psDetalle = conexion.prepareStatement(sqlDetalle)) {
-                for (ItemCarrito item : carrito.getItems()) {
-                    psDetalle.setInt(1, idPedido);
-                    psDetalle.setInt(2, item.getProducto().getId());
-                    psDetalle.setInt(3, item.getCantidad());
-                    psDetalle.setDouble(4, item.getSubtotal());
-                    psDetalle.addBatch();
-                }
-                psDetalle.executeBatch();
-            }
-
-            conexion.commit();
-            exito = true;
-
-        } catch (SQLException e) {
-            conexion.rollback();
-            throw e;
-        } finally {
-            conexion.setAutoCommit(true);
+    public int registrarPedido(Pedido pedido) throws SQLException {
+        String sql = "INSERT INTO Pedido (id_usuario, total, estado) VALUES (?,?, 'Pendiente')";
+        try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setInt(1, pedido.getIdUsuario());
+            ps.setDouble(2, pedido.getTotal());
+            ps.executeUpdate();
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()) return rs.getInt(1);
         }
+        return -1;
+    }
 
-        return exito;
+    public void registrarDetallePedido(int idPedido, List<ItemCarrito> items) throws SQLException {
+        String sql = """
+            INSERT INTO DetallePedido (id_pedido, id_prenda, id_disenio, cantidad, subtotal)
+            VALUES (?,?,?,?,?)
+        """;
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            for (ItemCarrito item : items) {
+                ps.setInt(1, idPedido);
+                ps.setInt(2, item.getPrenda().getId());
+                ps.setInt(3, item.getDisenio().getId());
+                ps.setInt(4, item.getCantidad());
+                ps.setDouble(5, item.getSubtotal());
+                ps.addBatch();
+            }
+            ps.executeBatch();
+        }
+    }
+
+    public void limpiarCarrito(int idCarrito) throws SQLException {
+        String sql = "DELETE FROM ItemCarrito WHERE id_carrito=?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idCarrito);
+            ps.executeUpdate();
+        }
     }
 }
+
 

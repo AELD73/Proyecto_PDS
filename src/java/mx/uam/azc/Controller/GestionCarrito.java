@@ -41,7 +41,7 @@ public class GestionCarrito extends HttpServlet {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
         if (usuario == null) {
-            response.sendRedirect("login.jsp");
+            response.sendRedirect("login.html");
             return;
         }
 

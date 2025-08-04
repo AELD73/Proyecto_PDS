@@ -12,7 +12,6 @@ import java.util.List;
  * @author Victor
  */
 
-
 public class CarritoDAO {
     private final Connection conn;
 
@@ -64,15 +63,14 @@ public class CarritoDAO {
                 item.setIdItem(rs.getInt("id_item"));
                 item.setIdCarrito(idCarrito);
 
-                Producto prenda = new Producto();
-                prenda.setId(rs.getInt("id_prenda"));
-                prenda.setTipoPrenda(rs.getString("nombre_prenda"));
-                prenda.setTipo(rs.getString("tipo"));
-                prenda.setColor(rs.getString("nombre_color"));
-                prenda.setCostoPersonal(rs.getDouble("costo_personal"));
-                prenda.setCostoEmpresarial(rs.getDouble("costo_empresarial"));
-
+                PrendaBase prenda = new PrendaBase();
+                prenda.setId_prenda(rs.getInt("id_prenda"));
+                prenda.setTipo_prenda(rs.getString("nombre_prenda") + " - " + rs.getString("tipo"));
+                prenda.setColor_prenda(rs.getString("nombre_color"));
+                // Por simplicidad, usamos costo personal (puedes ajustar según tipoUsr)
+                prenda.setCosto(rs.getDouble("costo_personal"));
                 item.setPrenda(prenda);
+
                 item.setCantidad(rs.getInt("cantidad"));
                 item.setSubtotal(rs.getDouble("subtotal"));
 
@@ -99,7 +97,7 @@ public class CarritoDAO {
         """;
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, item.getIdCarrito());
-            ps.setInt(2, item.getPrenda().getId());
+            ps.setInt(2, item.getPrenda().getId_prenda());
             ps.setInt(3, item.getDisenio().getId());
             ps.setInt(4, item.getCantidad());
             ps.setInt(5, item.getTalla().getId());
@@ -130,3 +128,4 @@ public class CarritoDAO {
         }
     }
 }
+

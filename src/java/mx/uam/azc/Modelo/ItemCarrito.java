@@ -12,7 +12,7 @@ package mx.uam.azc.Modelo;
 public class ItemCarrito {
     private int idItem;
     private int idCarrito;
-    private Producto prenda;
+    private PrendaBase prenda; // << Cambio principal
     private Disenio disenio;
     private Talla talla;
     private int cantidad;
@@ -24,8 +24,8 @@ public class ItemCarrito {
     public int getIdCarrito() { return idCarrito; }
     public void setIdCarrito(int idCarrito) { this.idCarrito = idCarrito; }
 
-    public Producto getPrenda() { return prenda; }
-    public void setPrenda(Producto prenda) { this.prenda = prenda; }
+    public PrendaBase getPrenda() { return prenda; }
+    public void setPrenda(PrendaBase prenda) { this.prenda = prenda; }
 
     public Disenio getDisenio() { return disenio; }
     public void setDisenio(Disenio disenio) { this.disenio = disenio; }
@@ -39,3 +39,4 @@ public class ItemCarrito {
     public double getSubtotal() { return subtotal; }
     public void setSubtotal(double subtotal) { this.subtotal = subtotal; }
 }
+

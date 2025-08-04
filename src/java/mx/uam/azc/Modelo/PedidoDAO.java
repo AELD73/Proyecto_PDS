@@ -39,7 +39,7 @@ public class PedidoDAO {
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             for (ItemCarrito item : items) {
                 ps.setInt(1, idPedido);
-                ps.setInt(2, item.getPrenda().getId());
+                ps.setInt(2, item.getPrenda().getId_prenda());
                 ps.setInt(3, item.getDisenio().getId());
                 ps.setInt(4, item.getCantidad());
                 ps.setDouble(5, item.getSubtotal());

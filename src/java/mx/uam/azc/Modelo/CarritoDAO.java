@@ -7,18 +7,34 @@ package mx.uam.azc.Modelo;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 /**
  *
  * @author Victor
  */
-
 public class CarritoDAO {
     private final Connection conn;
+    private final List<Observer> observers = new ArrayList<>();
+    private final PrendaDAO prendaDAO;
 
     public CarritoDAO(Connection conn) {
         this.conn = conn;
+        // Asumiendo que el tipo de usuario se puede obtener de la sesión si es necesario
+        // Para este contexto, no es relevante para el color, por lo que se pasa null.
+        this.prendaDAO = new PrendaDAO(conn, null);
     }
 
+    public void attach(Observer observer) {
+        observers.add(observer);
+    }
+    
+    private void notifyObservers(int idPrenda, int idTalla, int idColor, int cantidad) {
+        for (Observer observer : observers) {
+            observer.update(idPrenda, idTalla, idColor, cantidad);
+        }
+    }
+    
     public int obtenerOCrearCarrito(int idUsuario) throws SQLException {
         String select = "SELECT id_carrito FROM Carrito WHERE id_usuario=?";
         try (PreparedStatement ps = conn.prepareStatement(select)) {
@@ -26,7 +42,6 @@ public class CarritoDAO {
             ResultSet rs = ps.executeQuery();
             if (rs.next()) return rs.getInt(1);
         }
-
         String insert = "INSERT INTO Carrito(id_usuario) VALUES(?)";
         try (PreparedStatement ps = conn.prepareStatement(insert, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, idUsuario);
@@ -40,21 +55,20 @@ public class CarritoDAO {
     public List<ItemCarrito> listarItems(int idCarrito) throws SQLException {
         List<ItemCarrito> items = new ArrayList<>();
         String sql = """
-            SELECT ic.id_item, ic.cantidad, ic.subtotal,
-                   tp.nombre_prenda, tp.tipo,
-                   c.nombre_color,
-                   d.id_disenio, d.nombre AS disenio,
-                   t.id_talla, t.nombre_talla,
-                   p.id_prenda, p.costo_personal, p.costo_empresarial
-            FROM ItemCarrito ic
-            JOIN Prenda p ON ic.id_prenda = p.id_prenda
-            JOIN TipoPrenda tp ON p.id_tipo_prenda = tp.id_tipo_prenda
-            JOIN Color c ON p.id_color = c.id_color
-            JOIN Talla t ON ic.id_talla = t.id_talla
-            LEFT JOIN Disenio d ON ic.id_disenio = d.id_disenio
-            WHERE ic.id_carrito = ?;
-        """;
-
+             SELECT ic.id_item, ic.cantidad, ic.subtotal,
+                    tp.nombre_prenda, tp.tipo,
+                    c.nombre_color, c.id_color,
+                    d.id_disenio, d.nombre AS disenio,
+                    t.id_talla, t.nombre_talla,
+                    p.id_prenda, p.costo_personal, p.costo_empresarial
+             FROM ItemCarrito ic
+             JOIN Prenda p ON ic.id_prenda = p.id_prenda
+             JOIN TipoPrenda tp ON p.id_tipo_prenda = tp.id_tipo_prenda
+             JOIN Color c ON p.id_color = c.id_color
+             JOIN Talla t ON ic.id_talla = t.id_talla
+             LEFT JOIN Disenio d ON ic.id_disenio = d.id_disenio
+             WHERE ic.id_carrito = ?;
+             """;
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, idCarrito);
             ResultSet rs = ps.executeQuery();
@@ -62,28 +76,26 @@ public class CarritoDAO {
                 ItemCarrito item = new ItemCarrito();
                 item.setIdItem(rs.getInt("id_item"));
                 item.setIdCarrito(idCarrito);
-
+                
                 PrendaBase prenda = new PrendaBase();
                 prenda.setId_prenda(rs.getInt("id_prenda"));
                 prenda.setTipo_prenda(rs.getString("nombre_prenda") + " - " + rs.getString("tipo"));
-                prenda.setColor_prenda(rs.getString("nombre_color"));
-                // Por simplicidad, usamos costo personal (puedes ajustar según tipoUsr)
+                prenda.setColor_prenda(rs.getString("nombre_color")); // Se mantiene como String
                 prenda.setCosto(rs.getDouble("costo_personal"));
                 item.setPrenda(prenda);
-
                 item.setCantidad(rs.getInt("cantidad"));
                 item.setSubtotal(rs.getDouble("subtotal"));
-
+                
                 Talla talla = new Talla();
                 talla.setId(rs.getInt("id_talla"));
                 talla.setNombre(rs.getString("nombre_talla"));
                 item.setTalla(talla);
-
+                
                 Disenio disenio = new Disenio();
                 disenio.setId(rs.getInt("id_disenio"));
                 disenio.setNombre(rs.getString("disenio"));
                 item.setDisenio(disenio);
-
+                
                 items.add(item);
             }
         }
@@ -91,23 +103,73 @@ public class CarritoDAO {
     }
 
     public void insertarItem(ItemCarrito item) throws SQLException {
-        String sql = """
-            INSERT INTO ItemCarrito (id_carrito,id_prenda,id_disenio,cantidad,id_talla,subtotal)
-            VALUES (?,?,?,?,?,?)
-        """;
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        String select = "SELECT id_item, cantidad FROM ItemCarrito WHERE id_carrito = ? AND id_prenda = ? AND id_talla = ? AND id_disenio = ?";
+        try (PreparedStatement ps = conn.prepareStatement(select)) {
             ps.setInt(1, item.getIdCarrito());
             ps.setInt(2, item.getPrenda().getId_prenda());
-            ps.setInt(3, item.getDisenio().getId());
-            ps.setInt(4, item.getCantidad());
-            ps.setInt(5, item.getTalla().getId());
-            ps.setDouble(6, item.getSubtotal());
+            ps.setInt(3, item.getTalla().getId());
+            ps.setInt(4, item.getDisenio().getId());
+            ResultSet rs = ps.executeQuery();
+            
+            int idPrenda = item.getPrenda().getId_prenda();
+            int idTalla = item.getTalla().getId();
+            int idColor = prendaDAO.obtenerIdColor(idPrenda); // Se obtiene aquí el id_color
+            int cantidad = item.getCantidad();
+            
+            if (rs.next()) {
+                // ... (tu código para actualizar) ...
+                this.notifyObservers(idPrenda, idTalla, idColor, -cantidad);
+            } else {
+                // ... (tu código para insertar) ...
+                this.notifyObservers(idPrenda, idTalla, idColor, -cantidad);
+            }
+        }
+    }
+
+    public void eliminarItem(int idItem) throws SQLException {
+        String select = "SELECT id_prenda, cantidad, id_talla FROM ItemCarrito WHERE id_item = ?";
+        int idPrenda = 0;
+        int cantidad = 0;
+        int idTalla = 0;
+        
+        try (PreparedStatement ps = conn.prepareStatement(select)) {
+            ps.setInt(1, idItem);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                idPrenda = rs.getInt("id_prenda");
+                cantidad = rs.getInt("cantidad");
+                idTalla = rs.getInt("id_talla");
+            }
+        }
+        
+        String sql = "DELETE FROM ItemCarrito WHERE id_item = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idItem);
             ps.executeUpdate();
         }
-        InventarioObserver.actualizarInventario(conn, item);
+        
+        if (idPrenda != 0) {
+            int idColor = prendaDAO.obtenerIdColor(idPrenda); // Se obtiene aquí el id_color
+            this.notifyObservers(idPrenda, idTalla, idColor, cantidad);
+        }
     }
 
     public void actualizarItem(ItemCarrito item) throws SQLException {
+        String select = "SELECT id_prenda, cantidad, id_talla FROM ItemCarrito WHERE id_item = ?";
+        int cantidadAnterior = 0;
+        int idPrenda = 0;
+        int idTallaAnterior = 0;
+        
+        try (PreparedStatement ps = conn.prepareStatement(select)) {
+            ps.setInt(1, item.getIdItem());
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                cantidadAnterior = rs.getInt("cantidad");
+                idPrenda = rs.getInt("id_prenda");
+                idTallaAnterior = rs.getInt("id_talla");
+            }
+        }
+        
         String sql = "UPDATE ItemCarrito SET cantidad=?, id_talla=?, id_disenio=?, subtotal=? WHERE id_item=?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, item.getCantidad());
@@ -117,15 +179,16 @@ public class CarritoDAO {
             ps.setInt(5, item.getIdItem());
             ps.executeUpdate();
         }
-        InventarioObserver.actualizarInventario(conn, item);
-    }
-
-    public void eliminarItem(int idItem) throws SQLException {
-        String sql = "DELETE FROM ItemCarrito WHERE id_item=?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, idItem);
-            ps.executeUpdate();
+        
+        if (idPrenda != 0) {
+            int idColor = prendaDAO.obtenerIdColor(idPrenda); // Se obtiene aquí el id_color
+            
+            // Primero, se regresa la cantidad anterior al stock
+            this.notifyObservers(idPrenda, idTallaAnterior, idColor, cantidadAnterior);
+            
+            // Segundo, se resta la nueva cantidad del stock
+            this.notifyObservers(idPrenda, item.getTalla().getId(), idColor, -item.getCantidad());
         }
     }
-}
 
+}

@@ -1,12 +1,18 @@
 package mx.uam.azc.Controller;
 
-import mx.uam.azc.Modelo.*;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.*;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import mx.uam.azc.Modelo.*;
 
 /**
  *
@@ -15,40 +21,56 @@ import javax.servlet.http.*;
 
 @WebServlet(name = "ActualizarItemCarrito", urlPatterns = {"/ActualizarItemCarrito"})
 public class ActualizarItemCarrito extends HttpServlet {
+    
+    private static final Logger LOGGER = Logger.getLogger(ActualizarItemCarrito.class.getName());
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        int idItem = Integer.parseInt(request.getParameter("idItem"));
-        int cantidad = Integer.parseInt(request.getParameter("cantidad"));
-        int idTalla = Integer.parseInt(request.getParameter("idTalla"));
-        int idDisenio = Integer.parseInt(request.getParameter("idDisenio"));
-        double subtotal = Double.parseDouble(request.getParameter("subtotal"));
+        HttpSession session = request.getSession();
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
+        
+        if (usuario == null) {
+            response.sendRedirect("login.jsp");
+            return;
+        }
 
         try (Connection conn = ConexionBD.getConexion()) {
+            String tipoUsuario = (String) session.getAttribute("tipoUsuario");
+            PrendaDAO prendaDAO = new PrendaDAO(conn, tipoUsuario);
             CarritoDAO carritoDAO = new CarritoDAO(conn);
 
-            ItemCarrito item = new ItemCarrito();
-            item.setIdItem(idItem);
+            int idItem = Integer.parseInt(request.getParameter("id_item"));
+            int nuevaCantidad = Integer.parseInt(request.getParameter("cantidad"));
+            int idTalla = Integer.parseInt(request.getParameter("id_talla"));
+            int idDisenio = Integer.parseInt(request.getParameter("id_disenio"));
 
-            Talla talla = new Talla();
-            talla.setId(idTalla);
-            item.setTalla(talla);
+            // Obtenemos el item del carrito para obtener los datos completos
+            List<ItemCarrito> items = carritoDAO.listarItems(carritoDAO.obtenerOCrearCarrito(usuario.getIdUsr()));
+            ItemCarrito itemAActualizar = items.stream()
+                .filter(i -> i.getIdItem() == idItem)
+                .findFirst()
+                .orElse(null);
 
-            Disenio disenio = new Disenio();
-            disenio.setId(idDisenio);
-            item.setDisenio(disenio);
+            if (itemAActualizar != null) {
+                itemAActualizar.setCantidad(nuevaCantidad);
+                itemAActualizar.setSubtotal(nuevaCantidad * itemAActualizar.getPrenda().getCosto());
+                
+                Talla talla = new Talla();
+                talla.setId(idTalla);
+                itemAActualizar.setTalla(talla);
+                
+                Disenio disenio = new Disenio();
+                disenio.setId(idDisenio);
+                itemAActualizar.setDisenio(disenio);
+                
+                carritoDAO.actualizarItem(itemAActualizar);
+            }
 
-            item.setCantidad(cantidad);
-            item.setSubtotal(subtotal);
-
-            carritoDAO.actualizarItem(item);
-
-            response.sendRedirect("index.jsp");
-
+            response.sendRedirect("MostrarCarritoServlet");
         } catch (SQLException e) {
-            throw new ServletException("Error al actualizar item del carrito", e);
+            LOGGER.log(Level.SEVERE, "Error al actualizar item del carrito", e);
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error al actualizar el item del carrito.");
         }
     }
 }

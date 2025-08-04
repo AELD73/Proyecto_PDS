@@ -4,32 +4,26 @@
  */
 package mx.uam.azc.Modelo;
 
+import mx.uam.azc.Modelo.ConexionBD;
+import mx.uam.azc.Modelo.PrendaDAO;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author Victor
  */
+public class InventarioObserver implements Observer {
 
-
-public class InventarioObserver {
-
-    public static void actualizarInventario(Connection conn, ItemCarrito item) throws SQLException {
-        // Podrías validar stock antes, si deseas
-        String sqlUpdate = """
-            UPDATE Inventario SET cantidad = cantidad - ?
-            WHERE id_prenda=? AND id_talla=? 
-              AND id_color=(SELECT id_color FROM Prenda WHERE id_prenda=?)
-        """;
-
-        try (PreparedStatement ps = conn.prepareStatement(sqlUpdate)) {
-            ps.setInt(1, item.getCantidad());
-            ps.setInt(2, item.getPrenda().getId_prenda());
-            ps.setInt(3, item.getTalla().getId());
-            ps.setInt(4, item.getPrenda().getId_prenda());
-            ps.executeUpdate();
+    @Override
+    public void update(int idPrenda, int idTalla, int idColor, int cantidad) {
+        try (Connection conn = ConexionBD.getConexion()) {
+            PrendaDAO prendaDAO = new PrendaDAO(conn, null);
+            prendaDAO.actualizarStock(idPrenda, idTalla, idColor, cantidad);
+        } catch (SQLException ex) {
+            Logger.getLogger(InventarioObserver.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

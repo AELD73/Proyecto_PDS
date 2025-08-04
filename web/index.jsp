@@ -36,50 +36,55 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
                                             <c:if test="${not empty carritoItems}">
                                                 <h2>🛒 Tu Carrito</h2>
                                                 <table border="1">
-                                                    <tr>
-                                                        <th>Prenda</th>
-                                                        <th>Color</th>
-                                                        <th>Talla</th>
-                                                        <th>Diseño</th>
-                                                        <th>Cantidad</th>
-                                                        <th>Subtotal</th>
-                                                        <th>Acciones</th>
-                                                    </tr>
-                                                    <c:set var="total" value="0" />
-                                                    <c:forEach var="item" items="${carritoItems}">
+                                                    <thead>
                                                         <tr>
-                                                            <td>${item.prenda.tipoPrenda} - ${item.prenda.tipo}</td>
-                                                            <td>${item.prenda.color}</td>
-                                                            <td>${item.talla.nombre}</td>
-                                                            <td>${item.disenio.nombre}</td>
-                                                            <td>
-                                                                <form action="ActualizarItemCarrito" method="post" style="display:inline;">
-                                                                    <input type="hidden" name="idItem" value="${item.idItem}" />
-                                                                    <input type="hidden" name="idTalla" value="${item.talla.id}" />
-                                                                    <input type="hidden" name="idDisenio" value="${item.disenio.id}" />
-                                                                    <input type="number" name="cantidad" value="${item.cantidad}" min="1" />
-                                                                    <input type="hidden" name="subtotal" value="${item.subtotal}" />
-                                                                    <input type="submit" value="Actualizar"/>
-                                                                </form>
-                                                            </td>
-                                                            <td>$${item.subtotal}</td>
-                                                            <td>
-                                                                <form action="EliminarItemCarrito" method="post" style="display:inline;">
-                                                                    <input type="hidden" name="idItem" value="${item.idItem}"/>
-                                                                    <input type="submit" value="Eliminar"/>
-                                                                </form>
-                                                            </td>
+                                                            <th>Prenda</th>
+                                                            <th>Color</th>
+                                                            <th>Talla</th>
+                                                            <th>Diseño</th>
+                                                            <th>Cantidad</th>
+                                                            <th>Subtotal</th>
+                                                            <th>Acciones</th>
                                                         </tr>
-                                                        <c:set var="total" value="${total + item.subtotal}" />
-                                                    </c:forEach>
-                                                    <tr>
-                                                        <td colspan="5" style="text-align:right;"><strong>Total:</strong></td>
-                                                        <td colspan="2">$${total}</td>
-                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <c:set var="total" value="0" />
+                                                        <c:forEach var="item" items="${carritoItems}">
+                                                            <tr>
+                                                                <td>${item.prenda.tipo_prenda}</td>
+                                                                <td>${item.prenda.color_prenda}</td>
+                                                                <td>${item.talla.nombre}</td>
+                                                                <td>${item.disenio.nombre}</td>
+                                                                <td>
+                                                                    <form action="ActualizarItemCarrito" method="post" style="display:inline;">
+                                                                        <input type="hidden" name="idItem" value="${item.idItem}" />
+                                                                        <input type="hidden" name="idTalla" value="${item.talla.id}" />
+                                                                        <input type="hidden" name="idDisenio" value="${item.disenio.id}" />
+                                                                        <input type="number" name="cantidad" value="${item.cantidad}" min="1" />
+                                                                        <input type="hidden" name="subtotal" value="${item.subtotal}" />
+                                                                        <input type="submit" value="Actualizar"/>
+                                                                    </form>
+                                                                </td>
+                                                                <td>$${item.subtotal}</td>
+                                                                <td>
+                                                                    <form action="EliminarItemCarrito" method="post" style="display:inline;">
+                                                                        <input type="hidden" name="idItem" value="${item.idItem}"/>
+                                                                        <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                                                                    </form>
+                                                                </td>
+                                                            </tr>
+                                                            <c:set var="total" value="${total + item.subtotal}" />
+                                                        </c:forEach>
+                                                        <tr>
+                                                            <td colspan="5" style="text-align:right;"><strong>Total:</strong></td>
+                                                            <td>$${total}</td>
+                                                            <td></td>
+                                                        </tr>
+                                                    </tbody>
                                                 </table>
 
                                                 <form action="ConfirmarPedido" method="post">
-                                                    <input type="submit" class="buttons" value="Confirmar pedido"/>
+                                                    <button type="submit">Confirmar Pedido</button>
                                                 </form>
                                             </c:if>
                                         </c:when>
@@ -137,7 +142,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
                                 <img src="img/${prenda.tipo_prenda}.webp" class="imagen-curso u-full-width" alt="Imagen de Prenda">
                                 <div class="info-card">
                                     <h4>${prenda.tipo_prenda}</h4>
-                                    <form action="MostrarCarrito" method="post">
+                                    <form action="GestionCarrito" method="post">
                                         <label for="talla_${prenda.id_prenda}">Talla:</label>
                                         <select name="talla" id="talla_${prenda.id_prenda}" class="u-full-width">
                                             <option value="XS">XS</option>

@@ -9,5 +9,5 @@ package mx.uam.azc.Modelo;
  * @author lopez
  */
 public interface PrendaFactory {
-    Prenda crearPrenda(String tipoPrenda, String color, String talla, String disenio, double baseCosto);
+    Prenda crearPrenda(String tipo);
 }

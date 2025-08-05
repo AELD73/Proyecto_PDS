@@ -4,7 +4,6 @@
  */
 package mx.uam.azc.Modelo;
 
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -14,17 +13,27 @@ import java.sql.*;
  *
  * @author lopez
  */
-public class PrendaDAO implements DAO_Prenda<Prenda>{
-    
+public class PrendaDAO implements DAO_Prenda<Prenda> {
+
     private final Connection conexion;
     private final String tipo_Usr;
+    private final PrendaFactory factory;
+    
+    
+    public PrendaDAO(Connection conexion, String tipo_Usr, PrendaFactory factory) {
+        this.conexion = conexion;
+        this.tipo_Usr = tipo_Usr;
+        this.factory = factory;
+    }
+
 
     public PrendaDAO(Connection conexion, String tipo_Usr) {
         this.conexion = conexion;
         this.tipo_Usr = tipo_Usr;
+        this.factory = null;
     }
-
     
+
     
     @Override
     public Optional<Prenda> get(int id_usuario) {
@@ -33,42 +42,46 @@ public class PrendaDAO implements DAO_Prenda<Prenda>{
 
     @Override
     public PrendaBase obtenerPorId(int id_prenda) throws SQLException {
-        PrendaBase prenda = null;
         String sql = """
-             SELECT p.id_prenda, tp.nombre_prenda, c.nombre_color, 
-                    p.costo_personal, p.costo_empresarial
-             FROM Prenda p
-             JOIN TipoPrenda tp ON p.id_tipo_prenda = tp.id_tipo_prenda
-             JOIN Color c ON p.id_color = c.id_color
-             WHERE p.id_prenda = ?
-             """;
-        
-        try (PreparedStatement stm = conexion.prepareStatement(sql)) {
-            stm.setInt(1, id_prenda);
-            try (ResultSet rs = stm.executeQuery()) {
-                if (rs.next()) {
-                    prenda = new PrendaBase();
-                    prenda.setId_prenda(rs.getInt("id_prenda"));
-                    prenda.setTipo_prenda(rs.getString("nombre_prenda"));
-                    prenda.setColor_prenda(rs.getString("nombre_color"));
-                    
-                    double costo = tipo_Usr.equalsIgnoreCase("Empresarial")
-                                    ? rs.getDouble("costo_empresarial")
-                                    : rs.getDouble("costo_personal");
-                    prenda.setCosto(costo);
-                }
-            }
-        }
-        return prenda;
-    }
-    
-    @Override
-public List<Prenda> getAll() {
-    List<Prenda> lista_prendas = new ArrayList<>();
-    try {
-        
+        SELECT p.id_prenda, tp.nombre_prenda, tp.tipo, c.nombre_color, t.nombre_talla,
+               p.costo_personal, p.costo_empresarial
+        FROM Prenda p
+        JOIN TipoPrenda tp ON p.id_tipo_prenda = tp.id_tipo_prenda
+        JOIN Color c ON p.id_color = c.id_color
+        JOIN Talla t ON p.id_talla = t.id_talla
+        WHERE p.id_prenda = ?
+    """;
 
-        String sql = """
+        PreparedStatement stm = conexion.prepareStatement(sql);
+        stm.setInt(1, id_prenda);
+        ResultSet rs = stm.executeQuery();
+
+        if (rs.next()) {
+            String tipoPrenda = rs.getString("nombre_prenda");
+            PrendaFactory factory = new PrendaFactoryImpl();
+            Prenda prenda = factory.crearPrenda(tipoPrenda);
+
+            prenda.setId_prenda(rs.getInt("id_prenda"));
+            prenda.setTipo_prenda(tipoPrenda + " - " + rs.getString("tipo"));
+            prenda.setColor_prenda(rs.getString("nombre_color"));
+            prenda.setTalla_prenda(rs.getString("nombre_talla"));
+
+            double costo = tipo_Usr.equalsIgnoreCase("Empresarial")
+                    ? rs.getDouble("costo_empresarial")
+                    : rs.getDouble("costo_personal");
+            prenda.setCosto(costo);
+
+            return (PrendaBase) prenda; // Asegúrate de que tus subclases extiendan PrendaBase
+        }
+        return null;
+    }
+
+    @Override
+    public List<Prenda> getAll() {
+        List<Prenda> lista_prendas = new ArrayList<>();
+        try {
+
+            String sql = """
             SELECT p.id_prenda, tp.nombre_prenda, tp.tipo, c.nombre_color, t.nombre_talla,
                    p.costo_personal, p.costo_empresarial
             FROM Prenda p
@@ -77,35 +90,32 @@ public List<Prenda> getAll() {
             JOIN Talla t ON p.id_talla = t.id_talla
         """;
 
-        PreparedStatement stm = conexion.prepareStatement(sql);
-        ResultSet rs = stm.executeQuery();
+            PreparedStatement stm = conexion.prepareStatement(sql);
+            ResultSet rs = stm.executeQuery();
 
-        while (rs.next()) {
-            PrendaBase prenda = new PrendaBase();
-            prenda.setId_prenda(rs.getInt("id_prenda"));
-            prenda.setTipo_prenda(rs.getString("nombre_prenda") + " - " + rs.getString("tipo"));
-            prenda.setColor_prenda(rs.getString("nombre_color"));
-            prenda.setTalla_prenda(rs.getString("nombre_talla"));
+            while (rs.next()) {
+                PrendaBase prenda = new PrendaBase();
+                prenda.setId_prenda(rs.getInt("id_prenda"));
+                prenda.setTipo_prenda(rs.getString("nombre_prenda") + " - " + rs.getString("tipo"));
+                prenda.setColor_prenda(rs.getString("nombre_color"));
+                prenda.setTalla_prenda(rs.getString("nombre_talla"));
 
-            double costo = tipo_Usr.equalsIgnoreCase("Empresarial")
-                           ? rs.getDouble("costo_empresarial")
-                           : rs.getDouble("costo_personal");
+                double costo = tipo_Usr.equalsIgnoreCase("Empresarial")
+                        ? rs.getDouble("costo_empresarial")
+                        : rs.getDouble("costo_personal");
 
-            prenda.setCosto(costo);
-            lista_prendas.add(prenda);
+                prenda.setCosto(costo);
+                lista_prendas.add(prenda);
 
-            
+            }
+
+        } catch (SQLException ex) {
+
+            ex.printStackTrace();
         }
 
-    } catch (SQLException ex) {
-        
-        ex.printStackTrace();
+        return lista_prendas;
     }
-
-    
-    return lista_prendas;
-}
-
 
     @Override
     public void save(Prenda t) {
@@ -121,7 +131,7 @@ public List<Prenda> getAll() {
     public void delete(Prenda t) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
     @Override
     public int obtenerIdColor(int idPrenda) throws SQLException {
         String sql = "SELECT id_color FROM Prenda WHERE id_prenda = ?";
@@ -135,7 +145,7 @@ public List<Prenda> getAll() {
         }
         return -1;
     }
-    
+
     @Override
     public void actualizarStock(int idPrenda, int idTalla, int idColor, int cantidad) throws SQLException {
         String sql = """
@@ -151,6 +161,5 @@ public List<Prenda> getAll() {
             ps.executeUpdate();
         }
     }
-    
-}
 
+}

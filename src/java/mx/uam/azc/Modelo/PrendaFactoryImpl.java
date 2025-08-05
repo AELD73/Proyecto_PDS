@@ -12,35 +12,13 @@ import mx.uam.azc.Modelo.*;
 public class PrendaFactoryImpl implements PrendaFactory{
 
     @Override
-    public Prenda crearPrenda(String tipoPrenda, String color, String talla, String disenio, double baseCosto) {
-        
-        Prenda prendaBase;
-
-        switch (tipoPrenda.toLowerCase()) {
-            case "playera":
-                prendaBase = new Playera(color, talla, baseCosto);
-                break;
-            case "sudadera":
-                prendaBase = new Sudadera(color, talla, baseCosto);
-                break;
-            case "chamarra":
-                prendaBase = new Chamarra(color, talla, baseCosto);
-                break;
-            default:
-                throw new IllegalArgumentException("Tipo de prenda no válido: " + tipoPrenda);
-        }
-
-        // Aplica diseño (Decorador)
-        switch (disenio.toLowerCase()) {
-            case "intermedio":
-                return new DisenioGrande(prendaBase);
-            case "pro":
-                return new DisenioPro(prendaBase);
-            case "basico":
-            default:
-                return new DisenioPequenio(prendaBase);
-        }
-
+    public Prenda crearPrenda(String tipo) {
+        return switch (tipo.toLowerCase()) {
+            case "camisa" -> new Playera();
+            case "sudadera" -> new Sudadera();
+            case "chamarra" -> new Chamarra();
+            default -> throw new IllegalArgumentException("Tipo de prenda desconocido: " + tipo);
+        };
     }
 
     

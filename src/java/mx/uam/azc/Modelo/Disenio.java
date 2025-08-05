@@ -6,9 +6,8 @@ package mx.uam.azc.Modelo;
 
 /**
  *
- * @author Victor
+ * @author lopez
  */
-
 public class Disenio {
     private int id;
     private String nombre;
@@ -27,4 +26,3 @@ public class Disenio {
     public double getCosto() { return costo; }
     public void setCosto(double costo) { this.costo = costo; }
 }
-

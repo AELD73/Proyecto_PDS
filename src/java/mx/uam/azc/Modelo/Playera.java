@@ -8,7 +8,7 @@ package mx.uam.azc.Modelo;
  *
  * @author lopez
  */
-public class Playera extends Prenda {
+public class Playera extends PrendaBase {
 
     private String descripcion;
     private double precio;
@@ -19,11 +19,15 @@ public class Playera extends Prenda {
     }
 
     Playera(String color, String talla, double baseCosto) {
-         this.tipo_prenda = "Playera";
+         this.tipo_prenda = "Camisa";
         this.color_prenda = color;
         this.talla_prenda = talla;
         this.costo = costo;
         
+    }
+
+    Playera() {
+       
     }
 
     @Override

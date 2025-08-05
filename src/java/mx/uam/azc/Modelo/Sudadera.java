@@ -8,7 +8,7 @@ package mx.uam.azc.Modelo;
  *
  * @author lopez
  */
-public class Sudadera extends Prenda{
+public class Sudadera extends PrendaBase{
 
     private String descripcion;
     private double precio;
@@ -23,6 +23,10 @@ public class Sudadera extends Prenda{
         this.color_prenda = color;
         this.talla_prenda = talla;
         this.costo = costo;
+    }
+
+    Sudadera() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override

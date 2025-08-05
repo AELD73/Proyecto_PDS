@@ -41,56 +41,66 @@ public class GestionCarrito extends HttpServlet {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
         if (usuario == null) {
-            response.sendRedirect("login.html");
+            response.sendRedirect("login.jsp");
             return;
         }
 
+        // Parámetros del formulario
         int idPrenda = Integer.parseInt(request.getParameter("id_prenda"));
         String nombreTalla = request.getParameter("talla");
         String nombreDisenio = request.getParameter("disenio");
-        
+
         int idTalla = tallasMap.getOrDefault(nombreTalla, 0);
         int idDisenio = diseniosMap.getOrDefault(nombreDisenio, 0);
-        
         int cantidad = 1;
-        double subtotal;
 
         try (Connection conn = ConexionBD.getConexion()) {
 
-            String tipoUsuario = (String) session.getAttribute("tipoUsuario");
+            // Obtener tipo de usuario
+            String tipoUsuario = usuario.getTipoUsr();
 
-            PrendaDAO prendaDAO = new PrendaDAO(conn, tipoUsuario);
-            CarritoDAO carritoDAO = new CarritoDAO(conn,prendaDAO);
-            // Aquí se adjunta el observador
+            // Instanciar DAO con Fábrica de prendas
+            PrendaFactory factory = new PrendaFactoryImpl();
+            PrendaDAO prendaDAO = new PrendaDAO(conn, tipoUsuario, factory);
+
+            // Instanciar DAO de carrito
+            CarritoDAO carritoDAO = new CarritoDAO(conn, prendaDAO);
             carritoDAO.attach(new InventarioObserver());
-            int idCarrito = carritoDAO.obtenerOCrearCarrito(usuario.getIdUsr());
-            
-            // Llama al método recién implementado
-            PrendaBase prenda = prendaDAO.obtenerPorId(idPrenda);
 
+            // Obtener carrito del usuario
+            int idCarrito = carritoDAO.obtenerOCrearCarrito(usuario.getIdUsr());
+
+            // Obtener prenda desde DAO con Fábrica
+            Prenda prenda = prendaDAO.obtenerPorId(idPrenda);
             if (prenda == null) {
-                throw new ServletException("No se encontró la prenda con ID: " + idPrenda);
+                throw new ServletException("Prenda no encontrada con ID: " + idPrenda);
             }
 
-            subtotal = prenda.getCosto() * cantidad;
+            // Calcular subtotal
+            double subtotal = prenda.getPrecio() * cantidad;
 
+            // Crear item de carrito
             ItemCarrito item = new ItemCarrito();
             item.setIdCarrito(idCarrito);
-            item.setPrenda(prenda);
-            
+            item.setPrenda((PrendaBase) (Prenda) prenda);
+
             Disenio disenio = new Disenio();
             disenio.setId(idDisenio);
+            disenio.setNombre(nombreDisenio);
             item.setDisenio(disenio);
 
             Talla talla = new Talla();
             talla.setId(idTalla);
+            talla.setNombre(nombreTalla);
             item.setTalla(talla);
 
             item.setCantidad(cantidad);
             item.setSubtotal(subtotal);
 
+            // Insertar en BD
             carritoDAO.insertarItem(item);
 
+            // Redirigir
             response.sendRedirect("MostrarPrendasServlet");
 
         } catch (SQLException e) {

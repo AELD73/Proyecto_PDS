@@ -118,16 +118,16 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
             <div class="container">
                 <div class="row">
                     <div class="four columns icono icono1">
-                        <p>20,000 Cursos en línea <br>
-                            Explora  los temas más recientes</p>
+                        <p>Diseña tu propio estilo <br>
+                            Explora  las prendas más recientes</p>
                     </div>
                     <div class="four columns icono icono2">
                         <p>Instructores Expertos <br>
-                            Aprende con distintos estilos</p>
+                            Diseña con distintos estilos</p>
                     </div>
                     <div class="four columns icono icono3">
-                        <p>Acceso de por vida <br>
-                            Aprende a tu ritmo</p>
+                        <p>Calidad de alta gama <br>
+                            Contactanos </p>
                     </div>
                 </div>
             </div>
@@ -167,7 +167,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
                                         <select name="disenio" id="disenio_${prenda.id_prenda}" class="u-full-width">
                                             <option value="Basico">Básico</option>
                                             <option value="Intermedio">Intermedio</option>
-                                            <option value="Pro">Pro</option>~~~~
+                                            <option value="Pro">Pro</option>
                                         </select>
 
                                         <p class="precio">

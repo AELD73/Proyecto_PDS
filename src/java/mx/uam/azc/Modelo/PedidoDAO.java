@@ -3,10 +3,7 @@ package mx.uam.azc.Modelo;
 import java.sql.*;
 import java.util.List;
 
-/**
- *
- * @author Victor
- */
+
 public class PedidoDAO {
     private final Connection conn;
 

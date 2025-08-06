@@ -1,0 +1,47 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>JSP Page</title>
+        <link rel="stylesheet" href="css/style.css">
+    </head>
+    <body>
+
+        <div class="form-div-sing">
+            <form class="form-login" action="SignUsuarioServlet" method="post">
+                <h5>Registro de datos</h5>
+                <label class="email">Nombre: </label>
+                <input class="controls" type="text" name="nombre"  >
+                <label class="email">Correo electrónico: </label>
+                <input class="controls" type="text" name="usuario"  >
+                <label class="email">Contraseña: </label>
+                <input class="controls" type="password" name="contrasena"  >
+                <div class="campo-radio">
+                    <span>Tipo de usuario:</span>
+
+                    <label class="radio-opcion">
+                        <input type="radio" id="tipo_empresarial"
+                               name="tipo_usuario" value="Empresarial" required>
+                        Empresarial
+                    </label>
+
+                    <label class="radio-opcion">
+                        <input type="radio" id="tipo_personal"
+                               name="tipo_usuario" value="Personal">
+                        Personal
+                    </label>
+                </div>
+
+                <input class="buttons" type="submit" name="" value="Ingresar">
+                <p><a href="index.jsp">¿Olvidaste tu Contraseña?</a></p>
+            </form>
+
+        </div>
+
+
+
+
+
+    </body>
+</html>

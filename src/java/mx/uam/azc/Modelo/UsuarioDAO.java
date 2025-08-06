@@ -55,7 +55,27 @@ public class UsuarioDAO implements DAO<Usuario>{
 
     @Override
     public void save(Usuario t) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        String sql = "INSERT INTO Usuario (nombre, correo, contraseña, tipo_usuario) VALUES (?, ?, ?, ?)";
+
+        try (PreparedStatement stm = conexion.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            stm.setString(1, t.getNombre());
+            stm.setString(2, t.getCorreo());
+            stm.setString(3, t.getPassword());
+            stm.setString(4, t.getTipoUsr());
+            int filas = stm.executeUpdate();
+            
+            if(filas >0){
+                ResultSet rs = stm.getGeneratedKeys();
+                if(rs.next()){
+                    int id = rs.getInt(1);
+                    t.setIdUsr(id);
+                    
+                }
+            }
+            
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al guardar el usuario", e);
+        }
     }
 
     @Override
